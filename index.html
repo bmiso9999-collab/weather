@@ -17,171 +17,216 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            overflow: hidden; /* 스크롤바 방지 */
+            overflow: hidden; 
         }
         
         .weather-container {
             background: rgba(255, 255, 255, 0.98);
-            width: 95%;
-            height: 90vh; /* 화면을 더 넓게 쓰도록 높이 확장 */
-            padding: 25px 35px;
+            width: 96%;
+            height: 92vh; 
+            padding: 25px 40px; 
             border-radius: 30px;
             box-shadow: 0 25px 60px rgba(0,0,0,0.4);
             display: flex;
+            flex-direction: column; 
+            justify-content: space-between;
             align-items: center;
-            justify-content: space-around;
         }
 
         /* =====================
-           현재 날씨 (왼쪽 영역)
+           상단 공통 헤더 (가운데 정렬)
         ===================== */
-        .current-weather {
-            flex: 1.2;
-            height: 100%;
+        .top-header {
+            width: 100%;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            border-right: 3px solid #e2e8f0;
-            padding-right: 25px;
+            gap: 20px;
+            padding-bottom: 15px; 
+            border-bottom: 3px solid #f1f5f9; 
+            white-space: nowrap;
         }
 
         .location-title {
-            margin: 0 0 5px;
+            font-size: 1.6rem; 
+            color: #7f8c8d; 
+            font-weight: bold;
+        }
+
+        .current-date {
+            font-size: 2.4rem;
+            font-weight: bold;
+            color: #34495e;
+        }
+
+        .current-time {
             font-size: 3.2rem;
+            font-weight: 900;
             color: #1e375a;
+            letter-spacing: -1px;
+        }
+
+        .header-divider {
+            color: #cbd5e1;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        /* =====================
+           본문 영역 (좌우 1:1 완벽한 대칭 레이아웃)
+        ===================== */
+        .main-content {
+            width: 100%;
+            flex: 1; 
+            display: flex;
+            align-items: stretch; 
+            justify-content: space-between; /* 여백 균등 분배 */
+            padding-top: 20px; 
+        }
+
+        /* [변경] 좌우 구역을 1:1 비율로 분할하여 양쪽 끝과 중앙의 여백이 완벽히 대칭을 이루도록 조정 */
+        .current-weather {
+            flex: 1; 
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; 
+            align-items: center;
+            text-align: center;
+            border-right: 3px solid #e2e8f0;
+            padding-right: 20px; 
+            padding-top: 10px; 
+        }
+
+        .tomorrow-weather {
+            flex: 1; /* 대칭 구조를 맞춰 우측 여백 쏠림 방지 */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; 
+            align-items: center;
+            padding-left: 20px; 
+            padding-top: 10px; 
+        }
+
+        /* 타이틀 스타일 */
+        .today-title-box {
+            display: flex;
+            align-items: baseline; 
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 25px; 
+            height: 40px; 
+        }
+
+        .today-title {
+            margin: 0;
+            font-size: 2.6rem;
+            color: #2c3e50;
             font-weight: bold;
             white-space: nowrap;
         }
 
-        /* 오늘 날짜 스타일 추가 */
-        .current-date {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #34495e;
-            margin-bottom: 5px;
-        }
-
-        .weather-icon-box img {
-            width: 220px;
-            height: 220px;
-            filter: drop-shadow(0 8px 15px rgba(0,0,0,0.2));
-        }
-
-        .weather-status {
-            font-size: 2.2rem;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-top: -10px;
-            margin-bottom: 5px;
-        }
-
-        .current-detail {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #34495e;
-        }
-
-        .current-temp {
-            font-size: 4.5rem;
-            color: #e74c3c;
-            line-height: 1.1;
-            font-weight: 900;
-        }
-
-        .today-range {
-            font-size: 1.8rem;
-            margin-bottom: 3px;
-        }
-
         .update-info {
-            margin-top: 15px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #7f8c8d;
-        }
-
-        /* =====================
-           내일 예보 (오른쪽 영역)
-        ===================== */
-        .tomorrow-weather {
-            flex: 2;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding-left: 35px;
+            font-size: 1.2rem;
+            font-weight: normal;
+            color: #b2bec3; 
+            white-space: nowrap;
         }
 
         .tomorrow-title-box {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            height: 40px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .tomorrow-title {
             margin: 0;
-            font-size: 2.8rem;
+            font-size: 2.6rem;
             color: #2c3e50;
             font-weight: bold;
             white-space: nowrap;
         }
 
-        /* 내일 날짜 스타일 추가 */
         .tomorrow-date {
             font-size: 1.8rem;
             color: #7f8c8d;
             font-weight: bold;
-            margin-top: 5px;
+            margin-left: 15px; 
         }
 
         .forecast-grid {
             width: 100%;
             display: flex;
-            gap: 30px;
+            justify-content: center;
+            gap: 25px;
         }
 
-        .forecast-item {
-            flex: 1;
+        /* ---------------------
+           카드 형태 디자인 및 여유 폭 확장
+        --------------------- */
+        .weather-card {
+            width: 100%;
+            /* [변경] 기존 320px에서 380px로 최대 크기를 넉넉하게 확장하여 긴 텍스트 겹침 방지 */
+            max-width: 380px; 
             background: #f8fafc;
             border: 2.5px solid #e2e8f0;
             border-radius: 20px;
-            padding: 25px 20px;
+            padding: 25px 20px; /* 내부 여백도 살짝 더 여유롭게 제공 */
             text-align: center;
             box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between; 
+            height: 380px; 
         }
 
-        .time-slot {
-            font-size: 2.2rem;
+        /* 카드 내부 콘텐츠 크기 */
+        .card-label {
+            font-size: 2.1rem;
             font-weight: bold;
             color: #2c3e50;
         }
 
-        .small-icon img {
-            width: 140px;
-            height: 140px;
+        .card-icon img {
+            width: 120px; 
+            height: 120px;
+            filter: drop-shadow(0 8px 12px rgba(0,0,0,0.15));
         }
 
-        .temp-range {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 10px;
+        .card-temp-main {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #e74c3c;
+            line-height: 1;
+            margin-bottom: 5px;
         }
 
-        .pop-info {
+        .card-temp-sub {
             font-size: 1.8rem;
+            font-weight: bold;
+            color: #34495e;
+            margin-bottom: 5px;
+        }
+
+        /* [변경] 오늘 날씨 하단 배지 겹침을 방지하기 위해 가로 폭 및 패딩 여유 설계 */
+        .card-info-badge {
+            font-size: 1.5rem;
             font-weight: bold;
             color: #2980b9;
             background: #eef2f7;
-            padding: 6px 15px;
+            padding: 8px 18px;
             border-radius: 12px;
-            display: inline-block;
+            white-space: nowrap;
+            width: 90%; /* 가로 여유공간 확보 */
+            display: flex;
+            justify-content: center;
+            gap: 8px;
         }
 
+        /* 색상 구분 */
         .min-temp {
             color: #3498db;
         }
@@ -195,81 +240,100 @@
 
 <div class="weather-container">
 
-    <!-- 왼쪽: 현재 및 오늘 날씨 -->
-    <div class="current-weather">
-        <h1 class="location-title">📍 창원 양덕동</h1>
-        <!-- 오늘 날짜 영역 -->
-        <div class="current-date" id="current-date">00월 00일 (요일)</div>
-
-        <div class="weather-icon-box">
-            <img id="current-icon" src="https://openweathermap.org/img/wn/01d@4x.png" alt="현재 날씨">
-        </div>
-
-        <div class="weather-status" id="weather-status">날씨 확인 중...</div>
-
-        <div class="current-detail">
-            <!-- 실시간 기온 -->
-            <div class="current-temp" id="current-temp">--°</div>
-            <!-- 오늘 최저 / 최고 온도 -->
-            <div class="today-range">
-                <span class="min-temp" id="today-min">--°</span> / 
-                <span class="max-temp" id="today-max">--°</span>
-            </div>
-            <div>🌡 체감 <span id="feels-temp">--°</span></div>
-            <div>💧 습도 <span id="humidity">--%</span></div>
-        </div>
-
-        <div class="update-info" id="current-update">날씨 연결 시도 중...</div>
+    <!-- 1. 상단 공통 헤더 -->
+    <div class="top-header">
+        <span class="location-title">📍 창원시 양덕동</span>
+        <span class="header-divider">|</span>
+        <span class="current-date" id="current-date">00월 00일 (요일)</span>
+        <span class="current-time" id="current-time">00:00:00</span>
     </div>
 
-    <!-- 오른쪽: 내일 날씨 예보 -->
-    <div class="tomorrow-weather">
-        <div class="tomorrow-title-box">
-            <h2 class="tomorrow-title">🔮 내일 날씨 예보</h2>
-            <!-- 내일 날짜 영역 -->
-            <div class="tomorrow-date" id="tomorrow-date">00월 00일 (요일)</div>
-        </div>
-
-        <div class="forecast-grid">
-            <!-- 내일 오전 -->
-            <div class="forecast-item">
-                <div class="time-slot">오전 (09시)</div>
-                <div class="small-icon">
-                    <img id="tomorrow-am-icon" src="https://openweathermap.org/img/wn/02d@2x.png" alt="내일 오전">
-                </div>
-                <div class="temp-range">
-                    <span class="min-temp" id="tomorrow-am-min">--°</span> / 
-                    <span class="max-temp" id="tomorrow-am-max">--°</span>
-                </div>
-                <!-- 강수 확률 -->
-                <div class="pop-info">☔ 강수확률 <span id="tomorrow-am-pop">--%</span></div>
+    <!-- 2. 하단 날씨 본문 영역 -->
+    <div class="main-content">
+        
+        <!-- 왼쪽: 현재 및 오늘 날씨 -->
+        <div class="current-weather">
+            <div class="today-title-box">
+                <h2 class="today-title">☀️ 오늘 날씨</h2>
+                <span class="update-info" id="current-update">갱신 중...</span>
             </div>
 
-            <!-- 내일 오후 -->
-            <div class="forecast-item">
-                <div class="time-slot">오후 (15시)</div>
-                <div class="small-icon">
-                    <img id="tomorrow-pm-icon" src="https://openweathermap.org/img/wn/04d@2x.png" alt="내일 오후">
+            <!-- 네모 칸이 충분히 커진 오늘 날씨 카드 -->
+            <div class="weather-card">
+                <div class="card-label" id="weather-status">날씨 확인 중...</div>
+                <div class="card-icon">
+                    <img id="current-icon" src="https://openweathermap.org/img/wn/01d@4x.png" alt="현재 날씨">
                 </div>
-                <div class="temp-range">
-                    <span class="min-temp" id="tomorrow-pm-min">--°</span> / 
-                    <span class="max-temp" id="tomorrow-pm-max">--°</span>
+                <div class="card-temp-main" id="current-temp">--°</div>
+                <div class="card-temp-sub">
+                    <span class="min-temp" id="today-min">--°</span> / 
+                    <span class="max-temp" id="today-max">--°</span>
                 </div>
-                <!-- 강수 확률 -->
-                <div class="pop-info">☔ 강수확률 <span id="tomorrow-pm-pop">--%</span></div>
+                <div class="card-info-badge" style="color: #34495e;">
+                    <span>🌡 체감 <span id="feels-temp">--°</span></span>
+                    <span>|</span>
+                    <span>💧 습도 <span id="humidity">--%</span></span>
+                </div>
             </div>
         </div>
+
+        <!-- 오른쪽: 내일 날씨 예보 -->
+        <div class="tomorrow-weather">
+            <div class="tomorrow-title-box">
+                <span class="tomorrow-title">🔮 내일 날씨 예보</span>
+                <span class="tomorrow-date" id="tomorrow-date">(00월 00일)</span>
+            </div>
+
+            <div class="forecast-grid">
+                <!-- 내일 오전 카드 -->
+                <div class="weather-card">
+                    <div class="card-label">오전 (09시)</div>
+                    <div class="card-icon">
+                        <img id="tomorrow-am-icon" src="https://openweathermap.org/img/wn/02d@2x.png" alt="내일 오전">
+                    </div>
+                    <div class="card-temp-sub" style="font-size: 2.2rem; margin-top:10px;">
+                        <span class="min-temp" id="tomorrow-am-min">--°</span> / 
+                        <span class="max-temp" id="tomorrow-am-max">--°</span>
+                    </div>
+                    <div class="card-info-badge">☔ 강수확률 <span id="tomorrow-am-pop">--%</span></div>
+                </div>
+
+                <!-- 내일 오후 카드 -->
+                <div class="weather-card">
+                    <div class="card-label">오후 (15시)</div>
+                    <div class="card-icon">
+                        <img id="tomorrow-pm-icon" src="https://openweathermap.org/img/wn/04d@2x.png" alt="내일 오후">
+                    </div>
+                    <div class="card-temp-sub" style="font-size: 2.2rem; margin-top:10px;">
+                        <span class="min-temp" id="tomorrow-pm-min">--°</span> / 
+                        <span class="max-temp" id="tomorrow-pm-max">--°</span>
+                    </div>
+                    <div class="card-info-badge">☔ 강수확률 <span id="tomorrow-pm-pop">--%</span></div>
+                </div>
+            </div>
+        </div>
+
     </div>
-
 </div>
 
 <script>
     const MY_API_KEY = 'a97c0cd9e895f21fc9caa030137a6632';
 
-    // 한글 요일 변환 함수
     function getKoreanDay(date) {
         const week = ['일', '월', '화', '수', '목', '금', '토'];
         return week[date.getDay()];
+    }
+
+    function updateClock() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        
+        document.getElementById('current-time').innerText = `${hours}:${minutes}:${seconds}`;
+        
+        const todayStr = `${now.getMonth() + 1}월 ${now.getDate()}일 (${getKoreanDay(now)})`;
+        document.getElementById('current-date').innerText = todayStr;
     }
 
     function weatherKor(main){
@@ -295,7 +359,7 @@
         const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${LAT}&lon=${LON}&appid=${MY_API_KEY}&units=metric`;
 
         try {
-            // 1. 현재 날씨 가져오기
+            // 현재 날씨
             const currentRes = await fetch(currentUrl);
             const currentData = await currentRes.json();
 
@@ -307,23 +371,18 @@
             document.getElementById('feels-temp').innerText = Math.round(currentData.main.feels_like) + "°";
             document.getElementById('humidity').innerText = currentData.main.humidity + "%";
 
-            // 날짜 표시 업데이트 (오늘)
+            // 최근 갱신 시각 (연하게 표시)
             const now = new Date();
-            const todayStr = `${now.getMonth() + 1}월 ${now.getDate()}일 (${getKoreanDay(now)})`;
-            document.getElementById('current-date').innerText = todayStr;
+            document.getElementById('current-update').innerText = `(${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} 갱신)`;
 
-            // 업데이트 갱신 시각 업데이트
-            document.getElementById('current-update').innerText = `최근 갱신 ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-
-            // 2. 예보 가져오기
+            // 내일 예보
             const forecastRes = await fetch(forecastUrl);
             const forecastData = await forecastRes.json();
 
             const tomorrow = new Date(Date.now() + 86400000);
             const dateStr = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth()+1).padStart(2,'0')}-${String(tomorrow.getDate()).padStart(2,'0')}`;
             
-            // 날짜 표시 업데이트 (내일)
-            const tomorrowStr = `${tomorrow.getMonth() + 1}월 ${tomorrow.getDate()}일 (${getKoreanDay(tomorrow)})`;
+            const tomorrowStr = `(${tomorrow.getMonth() + 1}월 ${tomorrow.getDate()}일)`;
             document.getElementById('tomorrow-date').innerText = tomorrowStr;
 
             const am = forecastData.list.find(x => x.dt_txt === `${dateStr} 09:00:00`);
@@ -333,26 +392,27 @@
                 document.getElementById('tomorrow-am-icon').src = `https://openweathermap.org/img/wn/${am.weather[0].icon}@2x.png`;
                 document.getElementById('tomorrow-am-min').innerText = Math.round(am.main.temp_min) + "°";
                 document.getElementById('tomorrow-am-max').innerText = Math.round(am.main.temp_max) + "°";
-                // 강수 확률 표시 (POP 데이터는 0~1 범위이므로 100을 곱해 %로 만듭니다)
                 document.getElementById('tomorrow-am-pop').innerText = Math.round(am.pop * 100) + "%";
             }
 
             if (pm) {
                 document.getElementById('tomorrow-pm-icon').src = `https://openweathermap.org/img/wn/${pm.weather[0].icon}@2x.png`;
                 document.getElementById('tomorrow-pm-min').innerText = Math.round(pm.main.temp_min) + "°";
-                document.getElementById('tomorrow-pm-max').innerText = Math.round(pm.main.temp_max) + "°";
-                // 강수 확률 표시
+                document.getElementById('tomorrow-pm-max').innerText = Math.round(pm.max_temp || pm.main.temp_max) + "°";
                 document.getElementById('tomorrow-pm-pop').innerText = Math.round(pm.pop * 100) + "%";
             }
 
         } catch (e) {
             console.log(e);
-            document.getElementById('current-update').innerText = "통신 연결 대기 중...";
+            document.getElementById('current-update').innerText = "(연결 대기)";
         }
     }
 
+    updateClock();
+    setInterval(updateClock, 1000); 
+
     fetchWeather();
-    setInterval(fetchWeather, 60000);
+    setInterval(fetchWeather, 60000); 
 </script>
 
 </body>
