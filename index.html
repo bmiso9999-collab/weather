@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>창원NC파크 실시간 날씨 (TV 대화면용)</title>
+    <title>창원NC파크 실시간 날씨 (기상청)</title>
     <style>
         * {
             box-sizing: border-box;
@@ -21,7 +21,6 @@
             overflow: hidden; 
         }
         
-        /* 메인 컨테이너 */
         .weather-container {
             background: rgba(255, 255, 255, 0.98);
             width: 96vw;    
@@ -35,9 +34,6 @@
             align-items: center;
         }
 
-        /* =====================
-           상단 공통 헤더
-        ===================== */
         .top-header {
             width: 100%;
             display: flex;
@@ -75,25 +71,21 @@
             font-weight: bold;
         }
 
-        /* =====================
-           본문 영역
-        ===================== */
         .main-content {
             width: 100%;
             flex: 1; 
             display: flex;
-            align-items: stretch; /* 높이를 부모와 완전히 맞추기 */
+            align-items: stretch; 
             justify-content: space-between; 
             min-height: 0; 
-            padding-top: 4vh; /* 상단 여백 확보 */
+            padding-top: 4vh; 
         }
 
-        /* [수정] 부모 박스 정렬 방식을 flex-start(상단 정렬)로 통일하여 타이틀 높이 완전 일치 */
         .current-weather {
             flex: 1; 
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; /* 상단 고정 */
+            justify-content: flex-start; 
             align-items: center;
             text-align: center;
             border-right: 0.4vw solid #e2e8f0;
@@ -105,13 +97,12 @@
             flex: 1; 
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; /* 상단 고정 */
+            justify-content: flex-start; 
             align-items: center;
             padding-left: 3vw; 
             height: 100%;
         }
 
-        /* [수정] 타이틀 박스 구조와 여백 높이 완벽 통일 */
         .today-title-box, .tomorrow-title-box {
             width: 100%;
             height: 6vh; 
@@ -119,7 +110,7 @@
             align-items: center; 
             justify-content: center;
             gap: 1vw;
-            margin-bottom: 3vh; /* 타이틀과 카드 사이의 공백 균등 부여 */
+            margin-bottom: 3vh; 
             flex-shrink: 0;
         }
 
@@ -132,7 +123,6 @@
             line-height: 1; 
         }
 
-        /* [수정] 서브 정보 폰트 사이즈 대칭(1.5vw) 통일 */
         .update-info, .tomorrow-date {
             font-size: 1.5vw;
             font-weight: bold;
@@ -145,7 +135,6 @@
             color: #b2bec3; 
         }
 
-        /* 내일 예보 배치 */
         .forecast-grid {
             width: 100%;
             display: flex;
@@ -154,9 +143,6 @@
             height: 100%;
         }
 
-        /* =====================
-           개별 날씨 카드 
-        ===================== */
         .weather-card {
             width: 100%;
             max-width: 42vw; 
@@ -237,22 +223,19 @@
 
 <div class="weather-container">
 
-    <!-- 1. 상단 공통 헤더 -->
     <div class="top-header">
-        <span class="location-title">⚾ 창원NC파크</span>
+        <span class="location-title">⚾ 창원NC파크 (기상청)</span>
         <span class="header-divider">|</span>
         <span class="current-date" id="current-date">00월 00일 (요일)</span>
         <span class="current-time" id="current-time">00:00:00</span>
     </div>
 
-    <!-- 2. 하단 날씨 본문 영역 -->
     <div class="main-content">
         
-        <!-- 왼쪽: 현재 및 오늘 날씨 -->
         <div class="current-weather">
             <div class="today-title-box">
                 <h2 class="today-title">☀️ 오늘 날씨</h2>
-                <span class="update-info" id="current-update">갱신 중...</span>
+                <span class="update-info" id="current-update">연결 대기 중...</span>
             </div>
 
             <div class="weather-card">
@@ -273,16 +256,13 @@
             </div>
         </div>
 
-        <!-- 오른쪽: 내일 날씨 예보 -->
         <div class="tomorrow-weather">
-            <!-- [수정] 타이틀 문구 '내일 날씨'로 심플하게 변경 -->
             <div class="tomorrow-title-box">
                 <span class="tomorrow-title">🔮 내일 날씨</span>
                 <span class="tomorrow-date" id="tomorrow-date">(00월 00일)</span>
             </div>
 
             <div class="forecast-grid">
-                <!-- 내일 오전 카드 -->
                 <div class="weather-card">
                     <div class="card-label">오전 (09시)</div>
                     <div class="card-icon">
@@ -295,7 +275,6 @@
                     <div class="card-info-badge">☔ 강수확률 <span id="tomorrow-am-pop">--%</span></div>
                 </div>
 
-                <!-- 내일 오후 카드 -->
                 <div class="weather-card">
                     <div class="card-label">오후 (15시)</div>
                     <div class="card-icon">
@@ -314,7 +293,12 @@
 </div>
 
 <script>
-    const MY_API_KEY = 'a97c0cd9e895f21fc9caa030137a6632';
+    // 제공해주신 기상청 공공데이터 인코딩 인증키가 직접 이식되었습니다.
+    const KMA_SERVICE_KEY = 'N%2B4uFclB3xLAFEdxPnZapi3snhIn0bkNpyVybsOsUWt3yxtSSd4tzGpmxH2IAX0CbniYDeBwkP6Sefav%2FRXgHA%3D%3D'; 
+    
+    // 창원NC파크 격자 좌표 (경남 창원시 마산회원구)
+    const NX = 90; 
+    const NY = 77; 
 
     function getKoreanDay(date) {
         const week = ['일', '월', '화', '수', '목', '금', '토'];
@@ -323,128 +307,214 @@
 
     function updateClock() {
         const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        
-        document.getElementById('current-time').innerText = `${hours}:${minutes}:${seconds}`;
-        
-        const todayStr = `${now.getMonth() + 1}월 ${now.getDate()}일 (${getKoreanDay(now)})`;
-        document.getElementById('current-date').innerText = todayStr;
+        document.getElementById('current-time').innerText = 
+            `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+        document.getElementById('current-date').innerText = 
+            `${now.getMonth() + 1}월 ${now.getDate()}일 (${getKoreanDay(now)})`;
     }
 
-    function weatherKor(main){
-        const map = {
-            "Clear": "맑음",
-            "Clouds": "구름 많음",
-            "Rain": "비",
-            "Drizzle": "이슬비",
-            "Thunderstorm": "천둥번개",
-            "Snow": "눈",
-            "Mist": "안개",
-            "Fog": "안개",
-            "Haze": "연무"
-        };
-        return map[main] || main;
+    function getSkyStatus(sky, pty) {
+        if (pty > 0) {
+            if (pty == 1 || pty == 4) return { text: "비", icon: "09d" };
+            if (pty == 2) return { text: "비/눈", icon: "13d" };
+            if (pty == 3) return { text: "눈", icon: "13d" };
+        }
+        if (sky == 1) return { text: "맑음", icon: "01d" };
+        if (sky == 3) return { text: "구름많음", icon: "03d" };
+        if (sky == 4) return { text: "흐림", icon: "04d" };
+        return { text: "맑음", icon: "01d" };
     }
 
-    async function fetchWeather(){
-        const LAT = '35.2230';
-        const LON = '128.5806';
+    // 기상청 단기예보의 가장 안정적인 base_time 세팅
+    function getBaseDateTime() {
+        const now = new Date();
+        const hours = [2, 5, 8, 11, 14, 17, 20, 23];
+        let currentHour = now.getHours();
+        let baseTime = "2300";
+        let targetDate = new Date(now);
+        
+        let checkTime = currentHour;
+        if (now.getMinutes() < 40) {
+            checkTime = currentHour - 1;
+        }
+        
+        let found = false;
+        for (let i = hours.length - 1; i >= 0; i--) {
+            if (checkTime >= hours[i]) {
+                baseTime = String(hours[i]).padStart(2, '0') + "00";
+                found = true;
+                break;
+            }
+        }
+        
+        if (!found) {
+            targetDate.setDate(targetDate.getDate() - 1);
+            baseTime = "2300";
+        }
+        
+        let y = targetDate.getFullYear();
+        let m = String(targetDate.getMonth() + 1).padStart(2, '0');
+        let d = String(targetDate.getDate()).padStart(2, '0');
+        
+        return { baseDate: `${y}${m}${d}`, baseTime };
+    }
 
-        const currentUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${LAT}&lon=${LON}&appid=${MY_API_KEY}&units=metric`;
-        const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${LAT}&lon=${LON}&appid=${MY_API_KEY}&units=metric`;
+    async function fetchKMAWeather() {
+        const { baseDate, baseTime } = getBaseDateTime();
+        
+        // 기상청 단기예보 조회 API 오리지널 주소
+        const targetUrl = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=${KMA_SERVICE_KEY}&pageNo=1&numOfRows=1000&dataType=JSON&base_date=${baseDate}&base_time=${baseTime}&nx=${NX}&ny=${NY}`;
+        
+        // CORS 및 통신 환경에 따른 로컬 보안 차단 대비용 우회 우회 서버(Proxy) 경로
+        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
+
+        let response;
+        let jsonData;
+        let connectionMode = "직접";
 
         try {
-            const currentRes = await fetch(currentUrl);
-            const currentData = await currentRes.json();
+            document.getElementById('current-update').innerText = "데이터 요청 중...";
+            document.getElementById('weather-status').innerText = "연결 시도 중";
 
-            document.getElementById('current-icon').src = `https://openweathermap.org/img/wn/${currentData.weather[0].icon}@4x.png`;
-            document.getElementById('weather-status').innerText = weatherKor(currentData.weather[0].main);
-            document.getElementById('current-temp').innerText = Math.round(currentData.main.temp) + "°";
-            document.getElementById('feels-temp').innerText = Math.round(currentData.main.feels_like) + "°";
-            document.getElementById('humidity').innerText = currentData.main.humidity + "%";
-
-            const now = new Date();
-            document.getElementById('current-update').innerText = `(${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} 갱신)`;
-
-            const forecastRes = await fetch(forecastUrl);
-            const forecastData = await forecastRes.json();
-
-            const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-            const todaysForecasts = forecastData.list.filter(item => item.dt_txt.startsWith(todayStr));
-            
-            let todayMin = currentData.main.temp_min; 
-            let todayMax = currentData.main.temp_max;
-
-            if (todaysForecasts.length > 0) {
-                const temps = todaysForecasts.map(item => item.main.temp);
-                temps.push(currentData.main.temp); 
-                todayMin = Math.min(...temps);
-                todayMax = Math.max(...temps);
+            // 1차 시도: 원본 API 호출
+            response = await fetch(targetUrl);
+            if (response.ok) {
+                jsonData = await response.json();
+            } else {
+                throw new Error("Direct Fetch Failed");
             }
-            document.getElementById('today-min').innerText = Math.round(todayMin) + "°";
-            document.getElementById('today-max').innerText = Math.round(todayMax) + "°";
+        } catch (directError) {
+            console.log("기상청 원본 직접 연결 실패 -> CORS 우회 모드 작동");
+            try {
+                // 2차 시도: 우회(CorsProxy) 경로로 재시도
+                response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error("Proxy Response Error");
+                jsonData = await response.json();
+                connectionMode = "우회";
+            } catch (proxyError) {
+                console.error(proxyError);
+                document.getElementById('current-update').innerText = "(기상청 서버 응답 에러)";
+                document.getElementById('weather-status').innerText = "연결 점검 필요";
+                return;
+            }
+        }
 
-            const tomorrow = new Date(Date.now() + 86400000);
-            const dateStr = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth()+1).padStart(2,'0')}-${String(tomorrow.getDate()).padStart(2,'0')}`;
-            
-            const tomorrowStr = `(${tomorrow.getMonth() + 1}월 ${tomorrow.getDate()}일)`;
-            document.getElementById('tomorrow-date').innerText = tomorrowStr;
+        try {
+            if (!jsonData || !jsonData.response) {
+                document.getElementById('current-update').innerText = "(서버 데이터 에러)";
+                document.getElementById('weather-status').innerText = "응답 에러";
+                return;
+            }
 
-            const tomorrowsForecasts = forecastData.list.filter(item => item.dt_txt.startsWith(dateStr));
-
-            const amForecasts = tomorrowsForecasts.filter(item => {
-                const hour = parseInt(item.dt_txt.split(' ')[1].split(':')[0], 10);
-                return hour <= 12;
-            });
-            const pmForecasts = tomorrowsForecasts.filter(item => {
-                const hour = parseInt(item.dt_txt.split(' ')[1].split(':')[0], 10);
-                return hour > 12;
-            });
-
-            const am = forecastData.list.find(x => x.dt_txt === `${dateStr} 09:00:00`);
-            const pm = forecastData.list.find(x => x.dt_txt === `${dateStr} 15:00:00`);
-
-            if (am) {
-                document.getElementById('tomorrow-am-icon').src = `https://openweathermap.org/img/wn/${am.weather[0].icon}@2x.png`;
-                document.getElementById('tomorrow-am-pop').innerText = Math.round(am.pop * 100) + "%";
+            const header = jsonData.response.header;
+            if (header.resultCode !== "00") {
+                let errorMsg = `에러: ${header.resultCode}`;
+                let statusMsg = "연결 에러";
                 
-                if (amForecasts.length > 0) {
-                    const amTemps = amForecasts.map(item => item.main.temp);
-                    document.getElementById('tomorrow-am-min').innerText = Math.round(Math.min(...amTemps)) + "°";
-                    document.getElementById('tomorrow-am-max').innerText = Math.round(Math.max(...amTemps)) + "°";
-                } else {
-                    document.getElementById('tomorrow-am-min').innerText = Math.round(am.main.temp_min) + "°";
-                    document.getElementById('tomorrow-am-max').innerText = Math.round(am.main.temp_max) + "°";
+                // 기상청 고유 거부 코드 해석기
+                if (header.resultCode === "20" || header.resultCode === "30") {
+                    errorMsg = "(키 동기화 승인 대기중)";
+                    statusMsg = "키 승인 대기";
+                } else if (header.resultCode === "12" || header.resultCode === "22") {
+                    errorMsg = "(인증키 만료 혹은 무효)";
+                    statusMsg = "키 오류";
                 }
+                document.getElementById('current-update').innerText = errorMsg;
+                document.getElementById('weather-status').innerText = statusMsg;
+                return;
             }
 
-            if (pm) {
-                document.getElementById('tomorrow-pm-icon').src = `https://openweathermap.org/img/wn/${pm.weather[0].icon}@2x.png`;
-                document.getElementById('tomorrow-pm-pop').innerText = Math.round(pm.pop * 100) + "%";
+            const items = jsonData.response.body.items.item;
+            const now = new Date();
+            const todayStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+            
+            const tomorrow = new Date(Date.now() + 86400000);
+            const tomorrowStr = `${tomorrow.getFullYear()}${String(tomorrow.getMonth()+1).padStart(2,'0')}${String(tomorrow.getDate()).padStart(2,'0')}`;
+            document.getElementById('tomorrow-date').innerText = `(${tomorrow.getMonth() + 1}월 ${tomorrow.getDate()}일)`;
 
-                if (pmForecasts.length > 0) {
-                    const pmTemps = pmForecasts.map(item => item.main.temp);
-                    document.getElementById('tomorrow-pm-min').innerText = Math.round(Math.min(...pmTemps)) + "°";
-                    document.getElementById('tomorrow-pm-max').innerText = Math.round(Math.max(...pmTemps)) + "°";
-                } else {
-                    document.getElementById('tomorrow-pm-min').innerText = Math.round(pm.main.temp_min) + "°";
-                    document.getElementById('tomorrow-pm-max').innerText = Math.round(pm.main.temp_max) + "°";
-                }
+            // --- 오늘 현재 데이터 추출 및 조립 ---
+            const currentHourStr = String(now.getHours()).padStart(2, '0') + "00";
+            const todayItems = items.filter(x => x.fcstDate === todayStr);
+            
+            let curTemp = "--", curSky = "1", curPty = "0", curHum = "--";
+            
+            let curHourData = todayItems.filter(x => x.fcstTime === currentHourStr);
+            if (curHourData.length === 0 && todayItems.length > 0) {
+                curHourData = todayItems.filter(x => x.fcstTime === todayItems[0].fcstTime);
+            }
+            
+            if(curHourData.length > 0) {
+                curTemp = curHourData.find(x => x.category === 'TMP')?.fcstValue || "--";
+                curSky = curHourData.find(x => x.category === 'SKY')?.fcstValue || "1";
+                curPty = curHourData.find(x => x.category === 'PTY')?.fcstValue || "0";
+                curHum = curHourData.find(x => x.category === 'REH')?.fcstValue || "--";
+            }
+
+            const tmnItem = todayItems.find(x => x.category === 'TMN');
+            const tmxItem = todayItems.find(x => x.category === 'TMX');
+            
+            document.getElementById('current-temp').innerText = curTemp + "°";
+            document.getElementById('today-min').innerText = tmnItem ? Math.round(tmnItem.fcstValue) + "°" : "--°";
+            document.getElementById('today-max').innerText = tmxItem ? Math.round(tmxItem.fcstValue) + "°" : "--°";
+            document.getElementById('humidity').innerText = curHum + "%";
+            
+            if(curTemp !== "--" && curHum !== "--") {
+                const T = parseFloat(curTemp);
+                const RH = parseFloat(curHum);
+                const tw = T * Math.atan(0.151977 * Math.pow(RH + 8.313659, 0.5)) + Math.atan(T + RH) - Math.atan(RH - 1.676331) + 0.00391838 * Math.pow(RH, 1.5) * Math.atan(0.023101 * RH) - 4.686035;
+                document.getElementById('feels-temp').innerText = Math.round(tw) + "°";
+            }
+
+            const statusObj = getSkyStatus(curSky, curPty);
+            document.getElementById('weather-status').innerText = statusObj.text;
+            document.getElementById('current-icon').src = `https://openweathermap.org/img/wn/${statusObj.icon}@4x.png`;
+            
+            document.getElementById('current-update').innerText = `(${baseTime.substring(0,2)}시 발표, ${connectionMode} 연결)`;
+
+            // --- 내일 예보 데이터 추출 및 조립 ---
+            const tomorrowItems = items.filter(x => x.fcstDate === tomorrowStr);
+            
+            const tmTomorrowMin = tomorrowItems.find(x => x.category === 'TMN')?.fcstValue || "--";
+            const tmTomorrowMax = tomorrowItems.find(x => x.category === 'TMX')?.fcstValue || "--";
+
+            const amItems = tomorrowItems.filter(x => x.fcstTime === '0900');
+            if(amItems.length > 0) {
+                const amSky = amItems.find(x => x.category === 'SKY')?.fcstValue || "1";
+                const amPty = amItems.find(x => x.category === 'PTY')?.fcstValue || "0";
+                const amPop = amItems.find(x => x.category === 'POP')?.fcstValue || "0";
+                const amStatus = getSkyStatus(amSky, amPty);
+
+                document.getElementById('tomorrow-am-icon').src = `https://openweathermap.org/img/wn/${amStatus.icon}@2x.png`;
+                document.getElementById('tomorrow-am-pop').innerText = amPop + "%";
+                document.getElementById('tomorrow-am-min').innerText = tmTomorrowMin !== "--" ? Math.round(tmTomorrowMin) + "°" : "--°";
+                document.getElementById('tomorrow-am-max').innerText = tmTomorrowMax !== "--" ? Math.round(tmTomorrowMax) + "°" : "--°";
+            }
+
+            const pmItems = tomorrowItems.filter(x => x.fcstTime === '1500');
+            if(pmItems.length > 0) {
+                const pmSky = pmItems.find(x => x.category === 'SKY')?.fcstValue || "1";
+                const pmPty = pmItems.find(x => x.category === 'PTY')?.fcstValue || "0";
+                const pmPop = pmItems.find(x => x.category === 'POP')?.fcstValue || "0";
+                const pmStatus = getSkyStatus(pmSky, pmPty);
+
+                document.getElementById('tomorrow-pm-icon').src = `https://openweathermap.org/img/wn/${pmStatus.icon}@2x.png`;
+                document.getElementById('tomorrow-pm-pop').innerText = pmPop + "%";
+                document.getElementById('tomorrow-pm-min').innerText = tmTomorrowMin !== "--" ? Math.round(tmTomorrowMin) + "°" : "--°";
+                document.getElementById('tomorrow-pm-max').innerText = tmTomorrowMax !== "--" ? Math.round(tmTomorrowMax) + "°" : "--°";
             }
 
         } catch (e) {
-            console.log(e);
-            document.getElementById('current-update').innerText = "(연결 대기)";
+            console.error(e);
+            document.getElementById('current-update').innerText = "(데이터 가공 에러)";
+            document.getElementById('weather-status').innerText = "가공 실패";
         }
     }
 
     updateClock();
-    setInterval(updateClock, 1000); 
+    setInterval(updateClock, 1000);
 
-    fetchWeather();
-    setInterval(fetchWeather, 60000); 
+    fetchKMAWeather();
+    setInterval(fetchKMAWeather, 600000); // 10분마다 자동 갱신
 </script>
 
 </body>
