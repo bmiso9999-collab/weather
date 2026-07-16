@@ -450,12 +450,31 @@
                 curHum = curHourData.find(x => x.category === 'REH')?.fcstValue || "--";
             }
 
+            // [보완] 기상청이 오후에 안 보내준 TMN(최저) / TMX(최고) 데이터를 시간별 기온(TMP) 배열에서 역추적하여 안전장치 추가
             const tmnItem = todayItems.find(x => x.category === 'TMN');
             const tmxItem = todayItems.find(x => x.category === 'TMX');
+            const todayTmpValues = todayItems.filter(x => x.category === 'TMP').map(x => parseFloat(x.fcstValue));
+
+            let minTempDisplay = "--";
+            let maxTempDisplay = "--";
+
+            // 최저기온 채우기
+            if (tmnItem) {
+                minTempDisplay = Math.round(tmnItem.fcstValue);
+            } else if (todayTmpValues.length > 0) {
+                minTempDisplay = Math.min(...todayTmpValues); // 오늘 남은 예보 기온 중 가장 낮은 온도를 최저 기온으로 대체
+            }
+
+            // 최고기온 채우기
+            if (tmxItem) {
+                maxTempDisplay = Math.round(tmxItem.fcstValue);
+            } else if (todayTmpValues.length > 0) {
+                maxTempDisplay = Math.max(...todayTmpValues); // 오늘 남은 예보 기온 중 가장 높은 온도를 최고 기온으로 대체
+            }
             
             document.getElementById('current-temp').innerText = curTemp + "°";
-            document.getElementById('today-min').innerText = tmnItem ? Math.round(tmnItem.fcstValue) + "°" : "--°";
-            document.getElementById('today-max').innerText = tmxItem ? Math.round(tmxItem.fcstValue) + "°" : "--°";
+            document.getElementById('today-min').innerText = minTempDisplay + "°";
+            document.getElementById('today-max').innerText = maxTempDisplay + "°";
             document.getElementById('humidity').innerText = curHum + "%";
             
             if(curTemp !== "--" && curHum !== "--") {
