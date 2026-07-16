@@ -150,7 +150,7 @@
             background: #f8fafc;
             border: 0.4vh solid #e2e8f0;
             border-radius: 4vh;
-            padding: 3vh 2vw; 
+            padding: 2.5vh 2vw; 
             text-align: center;
             box-shadow: 0 1.5vh 3.5vh rgba(0,0,0,0.05);
             display: flex;
@@ -160,9 +160,17 @@
         }
 
         .card-label {
-            font-size: 2.5vw;
+            font-size: 2.3vw;
             font-weight: bold;
             color: #2c3e50;
+        }
+
+        /* 내일 예보 한글 날씨 텍스트 스타일 */
+        .card-sub-label {
+            font-size: 1.8vw;
+            font-weight: 800;
+            color: #7f8c8d;
+            margin-top: 0.5vh;
         }
 
         .card-icon {
@@ -174,7 +182,7 @@
         }
 
         .card-icon img {
-            height: 13vh; 
+            height: 12vh; 
             width: auto;
             filter: drop-shadow(0 1vh 2vh rgba(0,0,0,0.18));
         }
@@ -191,7 +199,7 @@
             font-size: 2.2vw; 
             font-weight: bold;
             color: #34495e;
-            margin-bottom: 1vh;
+            margin-bottom: 0.8vh;
         }
 
         .card-info-badge {
@@ -232,6 +240,7 @@
 
     <div class="main-content">
         
+        <!-- 오늘 날씨 -->
         <div class="current-weather">
             <div class="today-title-box">
                 <h2 class="today-title">☀️ 오늘 날씨</h2>
@@ -256,6 +265,7 @@
             </div>
         </div>
 
+        <!-- 내일 날씨 -->
         <div class="tomorrow-weather">
             <div class="tomorrow-title-box">
                 <span class="tomorrow-title">🔮 내일 날씨</span>
@@ -263,8 +273,12 @@
             </div>
 
             <div class="forecast-grid">
+                <!-- 내일 오전 카드 -->
                 <div class="weather-card">
-                    <div class="card-label">오전 (09시)</div>
+                    <div>
+                        <div class="card-label">오전 (09시)</div>
+                        <div class="card-sub-label" id="tomorrow-am-status">확인 중</div>
+                    </div>
                     <div class="card-icon">
                         <img id="tomorrow-am-icon" src="https://openweathermap.org/img/wn/02d@2x.png" alt="내일 오전">
                     </div>
@@ -275,8 +289,12 @@
                     <div class="card-info-badge">☔ 강수확률 <span id="tomorrow-am-pop">--%</span></div>
                 </div>
 
+                <!-- 내일 오후 카드 -->
                 <div class="weather-card">
-                    <div class="card-label">오후 (15시)</div>
+                    <div>
+                        <div class="card-label">오후 (15시)</div>
+                        <div class="card-sub-label" id="tomorrow-pm-status">확인 중</div>
+                    </div>
                     <div class="card-icon">
                         <img id="tomorrow-pm-icon" src="https://openweathermap.org/img/wn/04d@2x.png" alt="내일 오후">
                     </div>
@@ -293,10 +311,8 @@
 </div>
 
 <script>
-    // 제공해주신 기상청 공공데이터 인코딩 인증키가 직접 이식되었습니다.
     const KMA_SERVICE_KEY = 'N%2B4uFclB3xLAFEdxPnZapi3snhIn0bkNpyVybsOsUWt3yxtSSd4tzGpmxH2IAX0CbniYDeBwkP6Sefav%2FRXgHA%3D%3D'; 
     
-    // 창원NC파크 격자 좌표 (경남 창원시 마산회원구)
     const NX = 90; 
     const NY = 77; 
 
@@ -325,7 +341,6 @@
         return { text: "맑음", icon: "01d" };
     }
 
-    // 기상청 단기예보의 가장 안정적인 base_time 세팅
     function getBaseDateTime() {
         const now = new Date();
         const hours = [2, 5, 8, 11, 14, 17, 20, 23];
@@ -362,10 +377,7 @@
     async function fetchKMAWeather() {
         const { baseDate, baseTime } = getBaseDateTime();
         
-        // 기상청 단기예보 조회 API 오리지널 주소
         const targetUrl = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=${KMA_SERVICE_KEY}&pageNo=1&numOfRows=1000&dataType=JSON&base_date=${baseDate}&base_time=${baseTime}&nx=${NX}&ny=${NY}`;
-        
-        // CORS 및 통신 환경에 따른 로컬 보안 차단 대비용 우회 우회 서버(Proxy) 경로
         const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
 
         let response;
@@ -376,7 +388,6 @@
             document.getElementById('current-update').innerText = "데이터 요청 중...";
             document.getElementById('weather-status').innerText = "연결 시도 중";
 
-            // 1차 시도: 원본 API 호출
             response = await fetch(targetUrl);
             if (response.ok) {
                 jsonData = await response.json();
@@ -386,7 +397,6 @@
         } catch (directError) {
             console.log("기상청 원본 직접 연결 실패 -> CORS 우회 모드 작동");
             try {
-                // 2차 시도: 우회(CorsProxy) 경로로 재시도
                 response = await fetch(proxyUrl);
                 if (!response.ok) throw new Error("Proxy Response Error");
                 jsonData = await response.json();
@@ -411,7 +421,6 @@
                 let errorMsg = `에러: ${header.resultCode}`;
                 let statusMsg = "연결 에러";
                 
-                // 기상청 고유 거부 코드 해석기
                 if (header.resultCode === "20" || header.resultCode === "30") {
                     errorMsg = "(키 동기화 승인 대기중)";
                     statusMsg = "키 승인 대기";
@@ -450,7 +459,6 @@
                 curHum = curHourData.find(x => x.category === 'REH')?.fcstValue || "--";
             }
 
-            // [보완] 기상청이 오후에 안 보내준 TMN(최저) / TMX(최고) 데이터를 시간별 기온(TMP) 배열에서 역추적하여 안전장치 추가
             const tmnItem = todayItems.find(x => x.category === 'TMN');
             const tmxItem = todayItems.find(x => x.category === 'TMX');
             const todayTmpValues = todayItems.filter(x => x.category === 'TMP').map(x => parseFloat(x.fcstValue));
@@ -458,18 +466,16 @@
             let minTempDisplay = "--";
             let maxTempDisplay = "--";
 
-            // 최저기온 채우기
             if (tmnItem) {
                 minTempDisplay = Math.round(tmnItem.fcstValue);
             } else if (todayTmpValues.length > 0) {
-                minTempDisplay = Math.min(...todayTmpValues); // 오늘 남은 예보 기온 중 가장 낮은 온도를 최저 기온으로 대체
+                minTempDisplay = Math.min(...todayTmpValues);
             }
 
-            // 최고기온 채우기
             if (tmxItem) {
                 maxTempDisplay = Math.round(tmxItem.fcstValue);
             } else if (todayTmpValues.length > 0) {
-                maxTempDisplay = Math.max(...todayTmpValues); // 오늘 남은 예보 기온 중 가장 높은 온도를 최고 기온으로 대체
+                maxTempDisplay = Math.max(...todayTmpValues);
             }
             
             document.getElementById('current-temp').innerText = curTemp + "°";
@@ -496,6 +502,7 @@
             const tmTomorrowMin = tomorrowItems.find(x => x.category === 'TMN')?.fcstValue || "--";
             const tmTomorrowMax = tomorrowItems.find(x => x.category === 'TMX')?.fcstValue || "--";
 
+            // 내일 오전 세팅 (날씨 한글 텍스트 추가)
             const amItems = tomorrowItems.filter(x => x.fcstTime === '0900');
             if(amItems.length > 0) {
                 const amSky = amItems.find(x => x.category === 'SKY')?.fcstValue || "1";
@@ -503,12 +510,14 @@
                 const amPop = amItems.find(x => x.category === 'POP')?.fcstValue || "0";
                 const amStatus = getSkyStatus(amSky, amPty);
 
+                document.getElementById('tomorrow-am-status').innerText = amStatus.text; // 한글 텍스트 대입
                 document.getElementById('tomorrow-am-icon').src = `https://openweathermap.org/img/wn/${amStatus.icon}@2x.png`;
                 document.getElementById('tomorrow-am-pop').innerText = amPop + "%";
                 document.getElementById('tomorrow-am-min').innerText = tmTomorrowMin !== "--" ? Math.round(tmTomorrowMin) + "°" : "--°";
                 document.getElementById('tomorrow-am-max').innerText = tmTomorrowMax !== "--" ? Math.round(tmTomorrowMax) + "°" : "--°";
             }
 
+            // 내일 오후 세팅 (날씨 한글 텍스트 추가)
             const pmItems = tomorrowItems.filter(x => x.fcstTime === '1500');
             if(pmItems.length > 0) {
                 const pmSky = pmItems.find(x => x.category === 'SKY')?.fcstValue || "1";
@@ -516,6 +525,7 @@
                 const pmPop = pmItems.find(x => x.category === 'POP')?.fcstValue || "0";
                 const pmStatus = getSkyStatus(pmSky, pmPty);
 
+                document.getElementById('tomorrow-pm-status').innerText = pmStatus.text; // 한글 텍스트 대입
                 document.getElementById('tomorrow-pm-icon').src = `https://openweathermap.org/img/wn/${pmStatus.icon}@2x.png`;
                 document.getElementById('tomorrow-pm-pop').innerText = pmPop + "%";
                 document.getElementById('tomorrow-pm-min').innerText = tmTomorrowMin !== "--" ? Math.round(tmTomorrowMin) + "°" : "--°";
