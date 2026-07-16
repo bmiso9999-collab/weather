@@ -80,11 +80,10 @@
             flex: 1; 
             display: flex;
             align-items: stretch; 
-            justify-content: space-between; /* 여백 균등 분배 */
+            justify-content: space-between; 
             padding-top: 20px; 
         }
 
-        /* [변경] 좌우 구역을 1:1 비율로 분할하여 양쪽 끝과 중앙의 여백이 완벽히 대칭을 이루도록 조정 */
         .current-weather {
             flex: 1; 
             display: flex;
@@ -98,7 +97,7 @@
         }
 
         .tomorrow-weather {
-            flex: 1; /* 대칭 구조를 맞춰 우측 여백 쏠림 방지 */
+            flex: 1; 
             display: flex;
             flex-direction: column;
             justify-content: flex-start; 
@@ -168,12 +167,11 @@
         --------------------- */
         .weather-card {
             width: 100%;
-            /* [변경] 기존 320px에서 380px로 최대 크기를 넉넉하게 확장하여 긴 텍스트 겹침 방지 */
             max-width: 380px; 
             background: #f8fafc;
             border: 2.5px solid #e2e8f0;
             border-radius: 20px;
-            padding: 25px 20px; /* 내부 여백도 살짝 더 여유롭게 제공 */
+            padding: 25px 20px; 
             text-align: center;
             box-shadow: 0 8px 20px rgba(0,0,0,0.03);
             display: flex;
@@ -205,13 +203,13 @@
         }
 
         .card-temp-sub {
-            font-size: 1.8rem;
+            font-size: 2.2rem; /* 가독성을 위해 기온 폰트 확대 */
             font-weight: bold;
             color: #34495e;
             margin-bottom: 5px;
+            margin-top: 10px;
         }
 
-        /* [변경] 오늘 날씨 하단 배지 겹침을 방지하기 위해 가로 폭 및 패딩 여유 설계 */
         .card-info-badge {
             font-size: 1.5rem;
             font-weight: bold;
@@ -220,7 +218,7 @@
             padding: 8px 18px;
             border-radius: 12px;
             white-space: nowrap;
-            width: 90%; /* 가로 여유공간 확보 */
+            width: 90%; 
             display: flex;
             justify-content: center;
             gap: 8px;
@@ -258,7 +256,7 @@
                 <span class="update-info" id="current-update">갱신 중...</span>
             </div>
 
-            <!-- 네모 칸이 충분히 커진 오늘 날씨 카드 -->
+            <!-- 오늘 날씨 카드 -->
             <div class="weather-card">
                 <div class="card-label" id="weather-status">날씨 확인 중...</div>
                 <div class="card-icon">
@@ -285,26 +283,26 @@
             </div>
 
             <div class="forecast-grid">
-                <!-- 내일 오전 카드 -->
+                <!-- 내일 오전 카드 (최저/최고 기온 정상 복구) -->
                 <div class="weather-card">
                     <div class="card-label">오전 (09시)</div>
                     <div class="card-icon">
                         <img id="tomorrow-am-icon" src="https://openweathermap.org/img/wn/02d@2x.png" alt="내일 오전">
                     </div>
-                    <div class="card-temp-sub" style="font-size: 2.2rem; margin-top:10px;">
+                    <div class="card-temp-sub">
                         <span class="min-temp" id="tomorrow-am-min">--°</span> / 
                         <span class="max-temp" id="tomorrow-am-max">--°</span>
                     </div>
                     <div class="card-info-badge">☔ 강수확률 <span id="tomorrow-am-pop">--%</span></div>
                 </div>
 
-                <!-- 내일 오후 카드 -->
+                <!-- 내일 오후 카드 (최저/최고 기온 정상 복구) -->
                 <div class="weather-card">
                     <div class="card-label">오후 (15시)</div>
                     <div class="card-icon">
                         <img id="tomorrow-pm-icon" src="https://openweathermap.org/img/wn/04d@2x.png" alt="내일 오후">
                     </div>
-                    <div class="card-temp-sub" style="font-size: 2.2rem; margin-top:10px;">
+                    <div class="card-temp-sub">
                         <span class="min-temp" id="tomorrow-pm-min">--°</span> / 
                         <span class="max-temp" id="tomorrow-pm-max">--°</span>
                     </div>
@@ -359,47 +357,96 @@
         const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${LAT}&lon=${LON}&appid=${MY_API_KEY}&units=metric`;
 
         try {
-            // 현재 날씨
+            // 1. 실시간 현재 날씨 가져오기
             const currentRes = await fetch(currentUrl);
             const currentData = await currentRes.json();
 
             document.getElementById('current-icon').src = `https://openweathermap.org/img/wn/${currentData.weather[0].icon}@4x.png`;
             document.getElementById('weather-status').innerText = weatherKor(currentData.weather[0].main);
             document.getElementById('current-temp').innerText = Math.round(currentData.main.temp) + "°";
-            document.getElementById('today-min').innerText = Math.round(currentData.main.temp_min) + "°";
-            document.getElementById('today-max').innerText = Math.round(currentData.main.temp_max) + "°";
             document.getElementById('feels-temp').innerText = Math.round(currentData.main.feels_like) + "°";
             document.getElementById('humidity').innerText = currentData.main.humidity + "%";
 
-            // 최근 갱신 시각 (연하게 표시)
+            // 최근 갱신 시각 표시
             const now = new Date();
             document.getElementById('current-update').innerText = `(${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} 갱신)`;
 
-            // 내일 예보
+            // 2. 예보 데이터를 통해 오늘 최고 및 최저 기온 정확히 산출
             const forecastRes = await fetch(forecastUrl);
             const forecastData = await forecastRes.json();
 
+            // 오늘 날짜 계산 (YYYY-MM-DD)
+            const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+            const todaysForecasts = forecastData.list.filter(item => item.dt_txt.startsWith(todayStr));
+            
+            let todayMin = currentData.main.temp_min; 
+            let todayMax = currentData.main.temp_max;
+
+            if (todaysForecasts.length > 0) {
+                const temps = todaysForecasts.map(item => item.main.temp);
+                temps.push(currentData.main.temp); 
+                todayMin = Math.min(...temps);
+                todayMax = Math.max(...temps);
+            }
+            document.getElementById('today-min').innerText = Math.round(todayMin) + "°";
+            document.getElementById('today-max').innerText = Math.round(todayMax) + "°";
+
+
+            // 3. 내일 날짜 계산 및 오전/오후 기온 대칭 세팅
             const tomorrow = new Date(Date.now() + 86400000);
             const dateStr = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth()+1).padStart(2,'0')}-${String(tomorrow.getDate()).padStart(2,'0')}`;
             
             const tomorrowStr = `(${tomorrow.getMonth() + 1}월 ${tomorrow.getDate()}일)`;
             document.getElementById('tomorrow-date').innerText = tomorrowStr;
 
+            // 내일의 모든 예보 목록
+            const tomorrowsForecasts = forecastData.list.filter(item => item.dt_txt.startsWith(dateStr));
+
+            // [오전 기온 연산] (00:00 ~ 12:00 사이 데이터 대상)
+            const amForecasts = tomorrowsForecasts.filter(item => {
+                const hour = parseInt(item.dt_txt.split(' ')[1].split(':')[0], 10);
+                return hour <= 12;
+            });
+            // [오후 기온 연산] (12:00 ~ 24:00 사이 데이터 대상)
+            const pmForecasts = tomorrowsForecasts.filter(item => {
+                const hour = parseInt(item.dt_txt.split(' ')[1].split(':')[0], 10);
+                return hour > 12;
+            });
+
+            // 내일 오전 09시 및 오후 15시 특정 포인트 데이터 확보
             const am = forecastData.list.find(x => x.dt_txt === `${dateStr} 09:00:00`);
             const pm = forecastData.list.find(x => x.dt_txt === `${dateStr} 15:00:00`);
 
+            // 오전 카드 기온 세팅
             if (am) {
                 document.getElementById('tomorrow-am-icon').src = `https://openweathermap.org/img/wn/${am.weather[0].icon}@2x.png`;
-                document.getElementById('tomorrow-am-min').innerText = Math.round(am.main.temp_min) + "°";
-                document.getElementById('tomorrow-am-max').innerText = Math.round(am.main.temp_max) + "°";
                 document.getElementById('tomorrow-am-pop').innerText = Math.round(am.pop * 100) + "%";
+                
+                // 오전 구간의 실제 최저/최고 추출
+                if (amForecasts.length > 0) {
+                    const amTemps = amForecasts.map(item => item.main.temp);
+                    document.getElementById('tomorrow-am-min').innerText = Math.round(Math.min(...amTemps)) + "°";
+                    document.getElementById('tomorrow-am-max').innerText = Math.round(Math.max(...amTemps)) + "°";
+                } else {
+                    document.getElementById('tomorrow-am-min').innerText = Math.round(am.main.temp_min) + "°";
+                    document.getElementById('tomorrow-am-max').innerText = Math.round(am.main.temp_max) + "°";
+                }
             }
 
+            // 오후 카드 기온 세팅
             if (pm) {
                 document.getElementById('tomorrow-pm-icon').src = `https://openweathermap.org/img/wn/${pm.weather[0].icon}@2x.png`;
-                document.getElementById('tomorrow-pm-min').innerText = Math.round(pm.main.temp_min) + "°";
-                document.getElementById('tomorrow-pm-max').innerText = Math.round(pm.max_temp || pm.main.temp_max) + "°";
                 document.getElementById('tomorrow-pm-pop').innerText = Math.round(pm.pop * 100) + "%";
+
+                // 오후 구간의 실제 최저/최고 추출
+                if (pmForecasts.length > 0) {
+                    const pmTemps = pmForecasts.map(item => item.main.temp);
+                    document.getElementById('tomorrow-pm-min').innerText = Math.round(Math.min(...pmTemps)) + "°";
+                    document.getElementById('tomorrow-pm-max').innerText = Math.round(Math.max(...pmTemps)) + "°";
+                } else {
+                    document.getElementById('tomorrow-pm-min').innerText = Math.round(pm.main.temp_min) + "°";
+                    document.getElementById('tomorrow-pm-max').innerText = Math.round(pm.main.temp_max) + "°";
+                }
             }
 
         } catch (e) {
