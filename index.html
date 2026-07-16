@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>창원시 양덕동 대형 실시간 날씨 (TV용)</title>
+    <title>창원NC파크 실시간 날씨 (TV용)</title>
     <style>
         * {
             box-sizing: border-box;
@@ -16,15 +16,16 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            width: 100vw;
             margin: 0;
             overflow: hidden; 
         }
         
         .weather-container {
             background: rgba(255, 255, 255, 0.98);
-            width: 96%;
-            height: 92vh; 
-            padding: 25px 40px; 
+            width: 95vw;    
+            height: 90vh;   
+            padding: 2vh 2vw; 
             border-radius: 30px;
             box-shadow: 0 25px 60px rgba(0,0,0,0.4);
             display: flex;
@@ -34,22 +35,23 @@
         }
 
         /* =====================
-           상단 공통 헤더 (가운데 정렬)
+           상단 공통 헤더
         ===================== */
         .top-header {
             width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 20px;
-            padding-bottom: 15px; 
+            gap: 1.5vw;
+            padding-bottom: 1.5vh; 
             border-bottom: 3px solid #f1f5f9; 
             white-space: nowrap;
+            flex-shrink: 0; 
         }
 
         .location-title {
             font-size: 1.6rem; 
-            color: #7f8c8d; 
+            color: #2980b9; /* 야구장 분위기에 맞춰 블루 톤으로 포인트 */
             font-weight: bold;
         }
 
@@ -73,52 +75,52 @@
         }
 
         /* =====================
-           본문 영역 (좌우 1:1 완벽한 대칭 레이아웃)
+           본문 영역 (좌우 1:1 완벽 대칭)
         ===================== */
         .main-content {
             width: 100%;
             flex: 1; 
             display: flex;
-            align-items: stretch; 
+            align-items: center; 
             justify-content: space-between; 
-            padding-top: 20px; 
+            min-height: 0; 
         }
 
         .current-weather {
             flex: 1; 
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; 
+            justify-content: center; 
             align-items: center;
             text-align: center;
             border-right: 3px solid #e2e8f0;
-            padding-right: 20px; 
-            padding-top: 10px; 
+            padding-right: 2vw; 
+            height: 100%;
         }
 
         .tomorrow-weather {
             flex: 1; 
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; 
+            justify-content: center; 
             align-items: center;
-            padding-left: 20px; 
-            padding-top: 10px; 
+            padding-left: 2vw; 
+            height: 100%;
         }
 
         /* 타이틀 스타일 */
-        .today-title-box {
+        .today-title-box, .tomorrow-title-box {
             display: flex;
             align-items: baseline; 
             justify-content: center;
             gap: 12px;
-            margin-bottom: 25px; 
-            height: 40px; 
+            margin-bottom: 2vh; 
+            flex-shrink: 0;
         }
 
-        .today-title {
+        .today-title, .tomorrow-title {
             margin: 0;
-            font-size: 2.6rem;
+            font-size: 2.4rem;
             color: #2c3e50;
             font-weight: bold;
             white-space: nowrap;
@@ -131,100 +133,76 @@
             white-space: nowrap;
         }
 
-        .tomorrow-title-box {
-            text-align: center;
-            margin-bottom: 25px;
-            height: 40px; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .tomorrow-title {
-            margin: 0;
-            font-size: 2.6rem;
-            color: #2c3e50;
-            font-weight: bold;
-            white-space: nowrap;
-        }
-
         .tomorrow-date {
             font-size: 1.8rem;
             color: #7f8c8d;
             font-weight: bold;
-            margin-left: 15px; 
         }
 
         .forecast-grid {
             width: 100%;
             display: flex;
             justify-content: center;
-            gap: 25px;
+            gap: 2vw;
         }
 
-        /* ---------------------
-           카드 형태 디자인 및 여유 폭 확장
-        --------------------- */
         .weather-card {
             width: 100%;
-            max-width: 380px; 
+            max-width: 360px; 
             background: #f8fafc;
             border: 2.5px solid #e2e8f0;
             border-radius: 20px;
-            padding: 25px 20px; 
+            padding: 3vh 20px; 
             text-align: center;
             box-shadow: 0 8px 20px rgba(0,0,0,0.03);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: space-between; 
-            height: 380px; 
+            height: 52vh; 
+            min-height: 320px; 
         }
 
         /* 카드 내부 콘텐츠 크기 */
         .card-label {
-            font-size: 2.1rem;
+            font-size: 2rem;
             font-weight: bold;
             color: #2c3e50;
         }
 
         .card-icon img {
-            width: 120px; 
-            height: 120px;
+            width: 110px; 
+            height: 110px;
             filter: drop-shadow(0 8px 12px rgba(0,0,0,0.15));
         }
 
         .card-temp-main {
-            font-size: 3.5rem;
+            font-size: 3.3rem;
             font-weight: 900;
             color: #e74c3c;
             line-height: 1;
-            margin-bottom: 5px;
         }
 
         .card-temp-sub {
-            font-size: 2.2rem; /* 가독성을 위해 기온 폰트 확대 */
+            font-size: 2rem; 
             font-weight: bold;
             color: #34495e;
-            margin-bottom: 5px;
-            margin-top: 10px;
         }
 
         .card-info-badge {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: bold;
             color: #2980b9;
             background: #eef2f7;
-            padding: 8px 18px;
+            padding: 8px 12px;
             border-radius: 12px;
             white-space: nowrap;
-            width: 90%; 
+            width: 95%; 
             display: flex;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
         }
 
-        /* 색상 구분 */
         .min-temp {
             color: #3498db;
         }
@@ -238,25 +216,21 @@
 
 <div class="weather-container">
 
-    <!-- 1. 상단 공통 헤더 -->
     <div class="top-header">
-        <span class="location-title">📍 창원시 양덕동</span>
+        <span class="location-title">⚾ 창원NC파크</span>
         <span class="header-divider">|</span>
         <span class="current-date" id="current-date">00월 00일 (요일)</span>
         <span class="current-time" id="current-time">00:00:00</span>
     </div>
 
-    <!-- 2. 하단 날씨 본문 영역 -->
     <div class="main-content">
         
-        <!-- 왼쪽: 현재 및 오늘 날씨 -->
         <div class="current-weather">
             <div class="today-title-box">
                 <h2 class="today-title">☀️ 오늘 날씨</h2>
                 <span class="update-info" id="current-update">갱신 중...</span>
             </div>
 
-            <!-- 오늘 날씨 카드 -->
             <div class="weather-card">
                 <div class="card-label" id="weather-status">날씨 확인 중...</div>
                 <div class="card-icon">
@@ -275,7 +249,6 @@
             </div>
         </div>
 
-        <!-- 오른쪽: 내일 날씨 예보 -->
         <div class="tomorrow-weather">
             <div class="tomorrow-title-box">
                 <span class="tomorrow-title">🔮 내일 날씨</span>
@@ -283,7 +256,6 @@
             </div>
 
             <div class="forecast-grid">
-                <!-- 내일 오전 카드 (최저/최고 기온 정상 복구) -->
                 <div class="weather-card">
                     <div class="card-label">오전 (09시)</div>
                     <div class="card-icon">
@@ -296,7 +268,6 @@
                     <div class="card-info-badge">☔ 강수확률 <span id="tomorrow-am-pop">--%</span></div>
                 </div>
 
-                <!-- 내일 오후 카드 (최저/최고 기온 정상 복구) -->
                 <div class="weather-card">
                     <div class="card-label">오후 (15시)</div>
                     <div class="card-icon">
@@ -350,14 +321,14 @@
     }
 
     async function fetchWeather(){
-        const LAT = '35.2255';
-        const LON = '128.5847';
+        // [변경] 창원NC파크 중심부 위도(LAT), 경도(LON) 좌표 반영
+        const LAT = '35.2227';
+        const LON = '128.5812';
 
         const currentUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${LAT}&lon=${LON}&appid=${MY_API_KEY}&units=metric`;
         const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${LAT}&lon=${LON}&appid=${MY_API_KEY}&units=metric`;
 
         try {
-            // 1. 실시간 현재 날씨 가져오기
             const currentRes = await fetch(currentUrl);
             const currentData = await currentRes.json();
 
@@ -367,15 +338,12 @@
             document.getElementById('feels-temp').innerText = Math.round(currentData.main.feels_like) + "°";
             document.getElementById('humidity').innerText = currentData.main.humidity + "%";
 
-            // 최근 갱신 시각 표시
             const now = new Date();
             document.getElementById('current-update').innerText = `(${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} 갱신)`;
 
-            // 2. 예보 데이터를 통해 오늘 최고 및 최저 기온 정확히 산출
             const forecastRes = await fetch(forecastUrl);
             const forecastData = await forecastRes.json();
 
-            // 오늘 날짜 계산 (YYYY-MM-DD)
             const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
             const todaysForecasts = forecastData.list.filter(item => item.dt_txt.startsWith(todayStr));
             
@@ -391,38 +359,30 @@
             document.getElementById('today-min').innerText = Math.round(todayMin) + "°";
             document.getElementById('today-max').innerText = Math.round(todayMax) + "°";
 
-
-            // 3. 내일 날짜 계산 및 오전/오후 기온 대칭 세팅
             const tomorrow = new Date(Date.now() + 86400000);
             const dateStr = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth()+1).padStart(2,'0')}-${String(tomorrow.getDate()).padStart(2,'0')}`;
             
             const tomorrowStr = `(${tomorrow.getMonth() + 1}월 ${tomorrow.getDate()}일)`;
             document.getElementById('tomorrow-date').innerText = tomorrowStr;
 
-            // 내일의 모든 예보 목록
             const tomorrowsForecasts = forecastData.list.filter(item => item.dt_txt.startsWith(dateStr));
 
-            // [오전 기온 연산] (00:00 ~ 12:00 사이 데이터 대상)
             const amForecasts = tomorrowsForecasts.filter(item => {
                 const hour = parseInt(item.dt_txt.split(' ')[1].split(':')[0], 10);
                 return hour <= 12;
             });
-            // [오후 기온 연산] (12:00 ~ 24:00 사이 데이터 대상)
             const pmForecasts = tomorrowsForecasts.filter(item => {
                 const hour = parseInt(item.dt_txt.split(' ')[1].split(':')[0], 10);
                 return hour > 12;
             });
 
-            // 내일 오전 09시 및 오후 15시 특정 포인트 데이터 확보
             const am = forecastData.list.find(x => x.dt_txt === `${dateStr} 09:00:00`);
             const pm = forecastData.list.find(x => x.dt_txt === `${dateStr} 15:00:00`);
 
-            // 오전 카드 기온 세팅
             if (am) {
                 document.getElementById('tomorrow-am-icon').src = `https://openweathermap.org/img/wn/${am.weather[0].icon}@2x.png`;
                 document.getElementById('tomorrow-am-pop').innerText = Math.round(am.pop * 100) + "%";
                 
-                // 오전 구간의 실제 최저/최고 추출
                 if (amForecasts.length > 0) {
                     const amTemps = amForecasts.map(item => item.main.temp);
                     document.getElementById('tomorrow-am-min').innerText = Math.round(Math.min(...amTemps)) + "°";
@@ -433,12 +393,10 @@
                 }
             }
 
-            // 오후 카드 기온 세팅
             if (pm) {
                 document.getElementById('tomorrow-pm-icon').src = `https://openweathermap.org/img/wn/${pm.weather[0].icon}@2x.png`;
                 document.getElementById('tomorrow-pm-pop').innerText = Math.round(pm.pop * 100) + "%";
 
-                // 오후 구간의 실제 최저/최고 추출
                 if (pmForecasts.length > 0) {
                     const pmTemps = pmForecasts.map(item => item.main.temp);
                     document.getElementById('tomorrow-pm-min').innerText = Math.round(Math.min(...pmTemps)) + "°";
