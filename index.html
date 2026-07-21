@@ -133,7 +133,6 @@
             white-space: nowrap;
         }
 
-        /* 아이콘 영역 크기 및 여백 최적화 */
         .icon-weather-box {
             flex: 1;
             display: flex;
@@ -145,7 +144,6 @@
             width: 100%;
         }
 
-        /* 아이콘 높이를 18vh -> 24vh 로 키움 */
         .card-icon-img {
             height: 24vh;
             width: auto;
@@ -427,13 +425,15 @@
 
         renderWeeklyGrid(weeklyData);
         
-        // 동기화 시각 생성 (HH:MM:SS)
-        const updateTimeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+        // 기상청 발표 시각 포맷팅 (예: 1400 -> 14:00)
+        const formattedBaseTime = `${baseTime.substring(0, 2)}:${baseTime.substring(2, 4)}`;
+        // 브라우저 동기화 시각 (HH:MM)
+        const updateTimeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
         if (!midLandJson || !midTempJson) {
-            document.getElementById('current-update').innerText = `(중기예보 승인 반영 대기 중 ${updateTimeStr})`;
+            document.getElementById('current-update').innerText = `(기상청 ${formattedBaseTime} 발표 | 승인 대기 중)`;
         } else {
-            document.getElementById('current-update').innerText = `(7일 예보 동기화 완료 ${updateTimeStr})`;
+            document.getElementById('current-update').innerText = `(기상청 ${formattedBaseTime} 발표 | ${updateTimeStr} 동기화)`;
         }
     }
 
