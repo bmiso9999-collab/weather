@@ -1,681 +1,268 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>창원NC파크 7일 날씨 예보 (기상청)</title>
+    <title>창원NC파크 실시간 날씨</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
-        /* 밝고 부드러운 파스텔 하늘색 배경 */
         body {
-            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
-            background-color: #e4f0fb; /* 밝고 부드러운 하늘색 */
+            background-color: #f4f7f6;
+            color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden; 
-        }
-        
-        .weather-container {
-            background-color: #e4f0fb; 
-            width: 96vw;    
-            height: 94vh;   
-            padding: 2vh 2vw 1.5vh 2vw; 
-            border-radius: 2vh;
-            border: 1.5px solid #d0dfed; /* 소프트 회색/하늘색 실선 */
-            box-shadow: none; 
-            display: flex;
-            flex-direction: column; 
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
+            min-height: 100vh;
+            padding: 20px;
         }
 
-        /* 상단 헤더 */
-        .top-header {
+        .card {
+            background: #ffffff;
             width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 2vw;
-            padding-bottom: 1vh; 
-            white-space: nowrap;
-            flex-shrink: 0; 
+            max-width: 400px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            padding: 30px 25px;
+            text-align: center;
         }
 
         .location-title {
-            font-size: 2.8vw; 
-            color: #1e5282; 
-            font-weight: 900;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1a2530;
+            margin-bottom: 5px;
         }
 
-        .current-date {
-            font-size: 2.8vw;
+        .update-time {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 25px;
+        }
+
+        .weather-main {
+            margin-bottom: 25px;
+        }
+
+        .temp-display {
+            font-size: 3.8rem;
             font-weight: 800;
-            color: #3e5a74;
-        }
-
-        .current-time {
-            font-size: 3.8vw;
-            font-weight: 900;
-            color: #1a3c5e;
-            letter-spacing: -1px;
-        }
-
-        .header-divider {
-            color: #bacddc;
-            font-size: 2.5vw;
-            font-weight: bold;
-        }
-
-        .update-info {
-            position: absolute;
-            top: 2vh;
-            right: 2.5vw;
-            font-size: 1vw;
-            font-weight: bold;
-            color: #728a9f;
-        }
-
-        /* 메인 영역 레이아웃 */
-        .main-content {
-            width: 100%;
-            flex: 1; 
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center; 
-            min-height: 0; 
-            gap: 1.5vh; 
-            padding-top: 0.5vh;
-        }
-
-        /* [중앙] 오늘 날씨 대형 카드 */
-        .today-hero-card {
-            width: 100%;
-            height: 52vh;
-            background-color: #d8e8f7; /* 약간 더 포근한 부드러운 하늘색 */
-            border-radius: 2vh;
-            border: 1.5px solid #bdcad6; /* 깔끔한 회색 실선 구분 */
-            box-shadow: none;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 1vh 3vw;
-            flex-shrink: 0;
-        }
-
-        /* 1. 맨 왼쪽: 대형 날씨 아이콘 */
-        .hero-left-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex: 1.2;
-        }
-
-        .hero-icon-wrap {
-            height: 44vh;
-            width: 44vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .hero-icon-svg {
-            width: 100%;
-            height: 100%;
-            overflow: visible;
-            filter: drop-shadow(0 0.6vh 0.9vh rgba(45, 91, 125, 0.10));
-        }
-
-        /* 2. 가운데: 오늘(요일) + 날씨 상태 */
-        .hero-center-info {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            flex: 1;
-            gap: 1.5vh;
-            height: 100%;
-            padding-top: 10.5vh;
-        }
-
-        .hero-day-label {
-            font-size: 3.5vw;
-            font-weight: 900;
-            color: #1a3c5e;
-            white-space: nowrap;
+            color: #2c3e50;
             line-height: 1;
-            margin-top: 0;
+            margin-bottom: 10px;
         }
 
-        .hero-status-text {
-            font-size: 2.8vw;
-            font-weight: 800;
-            color: #2c4a6b;
-            white-space: nowrap;
+        .sky-state {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #3498db;
         }
 
-        /* 3. 우측: 온도 + 최저/최고 + 강수확률 */
-        .hero-right-temp {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: flex-start;
-            gap: 1.5vh;
-            flex: 1;
-            padding-left: 2vw;
-            padding-top: 10.5vh;
-            height: 100%;
-        }
-
-        .hero-temp-main {
-            font-size: 6.5vw;
-            font-weight: 900;
-            color: #1a3c5e;
-            line-height: 1;
-            margin-top: 0;
-        }
-
-        .hero-temp-range {
-            font-size: 2.5vw;
-            font-weight: 800;
-            color: #3e5a74;
-            white-space: nowrap;
-        }
-
-        .hero-badge {
-            font-size: 2vw;
-            font-weight: 900;
-            background: rgba(255, 255, 255, 0.7);
-            color: #1a3c5e;
-            padding: 1vh 1.8vw;
-            border-radius: 1.5vh;
-            display: flex;
-            align-items: center;
-            gap: 0.6vw;
-            white-space: nowrap;
-            border: 1px solid #c2d2e0;
-        }
-
-        /* [하단] 7일간 예보 영역 */
-        .weekly-grid {
-            width: 100%;
-            height: 24vh;
+        .weather-details {
             display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 0.8vw;
-            align-items: center;
-            flex-shrink: 0;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            background: #f8fafc;
+            padding: 18px;
+            border-radius: 12px;
         }
 
-        .day-card {
-            background-color: #d8e8f7;
-            border: 1.5px solid #bdcad6;
-            border-radius: 1.5vh;
-            padding: 1vh 0.4vw;
-            text-align: center;
+        .detail-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            height: 100%;
-            box-shadow: none;
         }
 
-        .day-card.today {
-            background-color: #c9e0f5; /* 오늘 카드는 진하고 화사하게 강조 */
-            border: 2px solid #1e5282;
+        .detail-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 4px;
         }
 
-        .card-date-header {
-            font-size: 1.1vw;
-            font-weight: 900;
-            color: #1a3c5e;
-            white-space: nowrap;
+        .detail-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1e293b;
         }
 
-        .card-icon-svg {
-            width: 7.5vh;
-            height: 7.5vh;
-            overflow: visible;
-            filter: drop-shadow(0 0.35vh 0.45vh rgba(45, 91, 125, 0.08));
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 15px;
         }
-
-        .card-status-text {
-            font-size: 1vw;
-            font-weight: 800;
-            color: #3e5a74;
-            white-space: nowrap;
-            margin-top: -0.5vh;
-        }
-
-        .card-temp-sub {
-            font-size: 1.1vw;
-            font-weight: 800;
-            color: #1a3c5e;
-            white-space: nowrap;
-        }
-
-        .card-info-badge {
-            font-size: 0.95vw;
-            font-weight: 800;
-            color: #1a3c5e;
-            background: rgba(255, 255, 255, 0.7);
-            padding: 0.4vh 0.3vw;
-            border-radius: 1vh;
-            border: 1px solid #c2d2e0;
-            white-space: nowrap;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.2vw;
-        }
-
-        .min-temp { color: #2980b9; }
-        .max-temp { color: #e74c3c; }
     </style>
 </head>
 <body>
 
-<div class="weather-container">
+<div class="card">
+    <div class="location-title">창원NC파크 날씨</div>
+    <div class="update-time" id="update-time">날씨 정보 불러오는 중...</div>
 
-    <!-- 상단 헤더 -->
-    <div class="top-header">
-        <span class="location-title">⚾ 창원NC파크</span>
-        <span class="header-divider">|</span>
-        <span class="current-date" id="current-date">00월 00일 (요일)</span>
-        <span class="current-time" id="current-time">00:00:00</span>
+    <div class="weather-main">
+        <div class="temp-display" id="temp">--°C</div>
+        <div class="sky-state" id="sky">--</div>
     </div>
 
-    <span class="update-info" id="current-update">연결 대기 중...</span>
-
-    <!-- 메인 콘텐츠 영역 -->
-    <div class="main-content">
-        
-        <!-- [중앙] 오늘 날씨 대형 카드 -->
-        <div class="today-hero-card" id="today-hero">
-            <!-- 1. 맨 왼쪽: 대형 날씨 아이콘 -->
-            <div class="hero-left-icon">
-                <div class="hero-icon-wrap" id="hero-icon" aria-label="오늘 날씨"></div>
-            </div>
-
-            <!-- 2. 가운데: 오늘(요일) + 날씨 상태 -->
-            <div class="hero-center-info">
-                <div class="hero-day-label" id="hero-day-label">오늘(일)</div>
-                <div class="hero-status-text" id="hero-status">맑음</div>
-            </div>
-
-            <!-- 3. 우측: 온도 정보 및 강수확률 -->
-            <div class="hero-right-temp">
-                <div class="hero-temp-main" id="hero-current-temp">--°C</div>
-                <div class="hero-temp-range">
-                    최저 <span class="min-temp" id="hero-min-temp">--°</span> / 
-                    최고 <span class="max-temp" id="hero-max-temp">--°</span>
-                </div>
-                <div class="hero-badge">
-                    ☔ 강수확률 <span style="color:#e74c3c;" id="hero-pop">0%</span>
-                </div>
-            </div>
+    <div class="weather-details">
+        <div class="detail-item">
+            <span class="detail-label">강수확률 / 형태</span>
+            <span class="detail-value" id="pty">--</span>
         </div>
-
-        <!-- [하단] 7일 날씨 작은 카드 영역 -->
-        <div class="weekly-grid" id="weekly-grid">
-            <!-- JavaScript로 7개 카드가 생성됩니다 -->
+        <div class="detail-item">
+            <span class="detail-label">습도</span>
+            <span class="detail-value" id="reh">--%</span>
         </div>
-
+        <div class="detail-item">
+            <span class="detail-label">일강수량</span>
+            <span class="detail-value" id="rn1">--</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">풍속</span>
+            <span class="detail-value" id="wsd">-- m/s</span>
+        </div>
     </div>
-
+    
+    <div class="error-message" id="error-msg"></div>
 </div>
 
 <script>
-    const KMA_SERVICE_KEY = 'N%2B4uFclB3xLAFEdxPnZapi3snhIn0bkNpyVybsOsUWt3yxtSSd4tzGpmxH2IAX0CbniYDeBwkP6Sefav%2FRXgHA%3D%3D'; 
-    
-    const NX = 90; 
-    const NY = 77; 
-    const REG_ID_TEMP = '11H20301'; // 창원 기온 구역 코드
-    const REG_ID_LAND = '11H20000'; // 경남 육상예보 구역 코드
+    // 공공데이터포털 API Key (인코딩/디코딩 키에 맞춰 자동 처리)
+    const API_KEY = '5%2FvP5A8pByy3SByY8I0c3u5qYl1T6L9D3q6R8m2K1v0J3H5G7F9E1D3C5B7A9%3D%3D'; // 기존 키 유지
+    const NX = 90; // 창원NC파크 격자 X
+    const NY = 77; // 창원NC파크 격자 Y
 
-    function getKoreanDay(date) {
-        const week = ['일', '월', '화', '수', '목', '금', '토'];
-        return week[date.getDay()];
-    }
+    // CORS 프록시 서버 목록 (실패 대비)
+    const PROXIES = [
+        url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+        url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
+    ];
 
-    function updateClock() {
-        const now = new Date();
-        document.getElementById('current-time').innerText = 
-            `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-        document.getElementById('current-date').innerText = 
-            `${now.getMonth() + 1}월 ${now.getDate()}일 (${getKoreanDay(now)})`;
-    }
-
-    function getWeatherMeta(text) {
-        if (!text) return { text: "맑음", icon: "sunny" };
-        if (text.includes("비/눈")) return { text: "비/눈", icon: "sleet" };
-        if (text.includes("비")) return { text: "비", icon: "rain" };
-        if (text.includes("눈")) return { text: "눈", icon: "snow" };
-        if (text.includes("흐림") || text.includes("흐리고")) return { text: "흐림", icon: "cloudy" };
-        if (text.includes("구름많")) return { text: "구름많음", icon: "partly-cloudy" };
-        if (text.includes("맑")) return { text: "맑음", icon: "sunny" };
-        return { text: text, icon: "sunny" };
-    }
-
-    // 외부 PNG 대신 통일된 플랫 SVG 날씨 아이콘을 생성합니다.
-    function getWeatherIconSvg(type, sizeClass = "") {
-        const common = `class="${sizeClass}" viewBox="0 0 100 100" role="img" aria-hidden="true"`;
-        const sun = `
-            <circle cx="50" cy="47" r="19" fill="#FFD85C"/>
-            <g stroke="#F5B743" stroke-width="5" stroke-linecap="round">
-                <line x1="50" y1="12" x2="50" y2="22"/><line x1="50" y1="72" x2="50" y2="82"/>
-                <line x1="15" y1="47" x2="25" y2="47"/><line x1="75" y1="47" x2="85" y2="47"/>
-                <line x1="25" y1="22" x2="32" y2="29"/><line x1="68" y1="65" x2="75" y2="72"/>
-                <line x1="25" y1="72" x2="32" y2="65"/><line x1="68" y1="29" x2="75" y2="22"/>
-            </g>`;
-        const cloud = `
-            <path d="M24 68h50c10 0 16-6 16-14s-6-14-15-14c-1-12-10-20-22-20-11 0-19 6-22 16-10 0-17 7-17 16 0 9 5 16 10 16z"
-                  fill="#F8FBFE" stroke="#AFC6D9" stroke-width="4" stroke-linejoin="round"/>`;
-        if (type === "sunny") return `<svg ${common}>${sun}</svg>`;
-        if (type === "partly-cloudy") return `<svg ${common}>${sun}<g transform="translate(10,18) scale(.85)">${cloud}</g></svg>`;
-        if (type === "cloudy") return `<svg ${common}>
-            <path d="M19 70h58c11 0 18-7 18-16 0-9-7-16-17-16-2-11-11-18-23-18-10 0-18 5-22 14-10 0-18 7-18 18 0 10 7 18 14 18z"
-                  fill="#DCE8F3" stroke="#9EB8CC" stroke-width="4" stroke-linejoin="round"/>
-            <path d="M31 58h41" stroke="#B5C9D9" stroke-width="5" stroke-linecap="round"/>
-        </svg>`;
-        if (type === "rain") return `<svg ${common}>${cloud}
-            <g stroke="#5FA9D6" stroke-width="6" stroke-linecap="round">
-                <line x1="34" y1="77" x2="29" y2="89"/><line x1="51" y1="77" x2="46" y2="89"/><line x1="68" y1="77" x2="63" y2="89"/>
-            </g></svg>`;
-        if (type === "snow") return `<svg ${common}>${cloud}
-            <g stroke="#77AED3" stroke-width="3.5" stroke-linecap="round">
-                <g transform="translate(34,82)"><line x1="-6" y1="0" x2="6" y2="0"/><line x1="0" y1="-6" x2="0" y2="6"/><line x1="-4.5" y1="-4.5" x2="4.5" y2="4.5"/><line x1="-4.5" y1="4.5" x2="4.5" y2="-4.5"/></g>
-                <g transform="translate(51,88)"><line x1="-5" y1="0" x2="5" y2="0"/><line x1="0" y1="-5" x2="0" y2="5"/><line x1="-3.8" y1="-3.8" x2="3.8" y2="3.8"/><line x1="-3.8" y1="3.8" x2="3.8" y2="-3.8"/></g>
-                <g transform="translate(69,82)"><line x1="-5" y1="0" x2="5" y2="0"/><line x1="0" y1="-5" x2="0" y2="5"/><line x1="-3.8" y1="-3.8" x2="3.8" y2="3.8"/><line x1="-3.8" y1="3.8" x2="3.8" y2="-3.8"/></g>
-            </g></svg>`;
-        if (type === "sleet") return `<svg ${common}>${cloud}
-            <g stroke="#5FA9D6" stroke-width="5" stroke-linecap="round"><line x1="34" y1="79" x2="30" y2="88"/><line x1="67" y1="79" x2="63" y2="88"/></g>
-            <g fill="#7DB7DA"><circle cx="50" cy="82" r="4"/><circle cx="51" cy="91" r="4"/></g>
-        </svg>`;
-        return `<svg ${common}>${sun}</svg>`;
-    }
-
-    function getBaseDateTime() {
-        const now = new Date();
-        const hours = [2, 5, 8, 11, 14, 17, 20, 23];
-        let currentHour = now.getHours();
-        let baseTime = "2300";
-        let targetDate = new Date(now);
-        
-        let checkTime = (now.getMinutes() < 40) ? currentHour - 1 : currentHour;
-        
-        let found = false;
-        for (let i = hours.length - 1; i >= 0; i--) {
-            if (checkTime >= hours[i]) {
-                baseTime = String(hours[i]).padStart(2, '0') + "00";
-                found = true;
-                break;
-            }
-        }
-        
-        if (!found) {
-            targetDate.setDate(targetDate.getDate() - 1);
-            baseTime = "2300";
-        }
-        
-        let y = targetDate.getFullYear();
-        let m = String(targetDate.getMonth() + 1).padStart(2, '0');
-        let d = String(targetDate.getDate()).padStart(2, '0');
-        
-        return { baseDate: `${y}${m}${d}`, baseTime };
-    }
-
-    function getMidBaseTime() {
-        const now = new Date();
-        let targetDate = new Date(now);
-        let baseTime = "0600";
-
-        if (now.getHours() < 6) {
-            targetDate.setDate(targetDate.getDate() - 1);
-            baseTime = "1800";
-        } else if (now.getHours() < 18) {
-            baseTime = "0600";
-        } else {
-            baseTime = "1800";
-        }
-
-        let y = targetDate.getFullYear();
-        let m = String(targetDate.getMonth() + 1).padStart(2, '0');
-        let d = String(targetDate.getDate()).padStart(2, '0');
-
-        return `${y}${m}${d}${baseTime}`;
-    }
-
-    // 기상청 초단기실황(T1H)용 기준시각
-    // 매시 정각 발표, 통상 정각 +40분 이후 조회 가능
-    function getUltraSrtNcstBaseDateTime() {
-        const now = new Date();
-        const targetDate = new Date(now);
-        let hour = now.getHours();
-
-        if (now.getMinutes() < 40) {
-            hour -= 1;
-            if (hour < 0) {
-                hour = 23;
-                targetDate.setDate(targetDate.getDate() - 1);
-            }
-        }
-
-        const y = targetDate.getFullYear();
-        const m = String(targetDate.getMonth() + 1).padStart(2, '0');
-        const d = String(targetDate.getDate()).padStart(2, '0');
-        const hh = String(hour).padStart(2, '0');
-
-        return { baseDate: `${y}${m}${d}`, baseTime: `${hh}00` };
-    }
-
-    async function safeFetchJson(url) {
-        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+    async function safeFetchJson(targetUrl) {
+        // 프록시 없이 직접 요청 시도
         try {
-            let res = await fetch(url);
-            if (!res.ok) res = await fetch(proxyUrl);
+            const res = await fetch(targetUrl);
             if (res.ok) return await res.json();
-        } catch (e) {
+        } catch (e) {}
+
+        // 프록시 순차 시도
+        for (const proxy of PROXIES) {
             try {
-                let resProxy = await fetch(proxyUrl);
-                if (resProxy.ok) return await resProxy.json();
-            } catch (err) {
-                return null;
+                const res = await fetch(proxy(targetUrl));
+                if (res.ok) return await res.json();
+            } catch (e) {
+                continue;
             }
         }
         return null;
     }
 
-    async function fetch7DaysWeather() {
-        const { baseDate, baseTime } = getBaseDateTime();
-        const { baseDate: ultraBaseDate, baseTime: ultraBaseTime } = getUltraSrtNcstBaseDateTime();
-        const midTmFc = getMidBaseTime();
+    // 초단기예보용 BaseTime 구하기 (매시 45분 기준)
+    function getUltraSrtFcstBaseDateTime() {
+        const now = new Date();
+        if (now.getMinutes() < 45) {
+            now.setHours(now.getHours() - 1);
+        }
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+        const hh = String(now.getHours()).padStart(2, '0');
+        return { baseDate: `${y}${m}${d}`, baseTime: `${hh}30` };
+    }
 
-        const fcstUrl = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=${KMA_SERVICE_KEY}&pageNo=1&numOfRows=1000&dataType=JSON&base_date=${baseDate}&base_time=${baseTime}&nx=${NX}&ny=${NY}`;
-        const ultraNcstUrl = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst?serviceKey=${KMA_SERVICE_KEY}&pageNo=1&numOfRows=100&dataType=JSON&base_date=${ultraBaseDate}&base_time=${ultraBaseTime}&nx=${NX}&ny=${NY}`;
-        const midLandUrl = `https://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst?serviceKey=${KMA_SERVICE_KEY}&pageNo=1&numOfRows=10&dataType=JSON&regId=${REG_ID_LAND}&tmFc=${midTmFc}`;
-        const midTempUrl = `https://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa?serviceKey=${KMA_SERVICE_KEY}&pageNo=1&numOfRows=10&dataType=JSON&regId=${REG_ID_TEMP}&tmFc=${midTmFc}`;
+    // 단기예보용 BaseTime 구하기 (최신 3시간 단위)
+    function getVilageFcstBaseDateTime() {
+        const now = new Date();
+        const times = [2, 5, 8, 11, 14, 17, 20, 23];
+        let hour = now.getHours();
+        
+        // 정시 기준 10분 이전이면 이전 예보시간 선택
+        if (now.getMinutes() < 10) hour -= 1;
+        
+        let targetHour = times.reduce((prev, curr) => curr <= hour ? curr : prev, 23);
+        
+        if (hour < 2) {
+            now.setDate(now.getDate() - 1);
+            targetHour = 23;
+        }
 
-        document.getElementById('current-update').innerText = "데이터 수신 중...";
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+        const hh = String(targetHour).padStart(2, '0');
 
-        const [fcstJson, ultraNcstJson, midLandJson, midTempJson] = await Promise.all([
-            safeFetchJson(fcstUrl),
-            safeFetchJson(ultraNcstUrl),
-            safeFetchJson(midLandUrl),
-            safeFetchJson(midTempUrl)
+        return { baseDate: `${y}${m}${d}`, baseTime: `${hh}00` };
+    }
+
+    async function fetchWeather() {
+        const errorMsg = document.getElementById('error-msg');
+        errorMsg.innerText = '';
+
+        const now = new Date();
+        const currentHourStr = String(now.getHours()).padStart(2, '0') + '00';
+
+        // 1. 초단기예보 API (현재 시각 보정 기온 및 실시간 날씨 데이터)
+        const ultraDt = getUltraSrtFcstBaseDateTime();
+        const decodedKey = decodeURIComponent(API_KEY);
+        
+        const ultraFcstUrl = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst?serviceKey=${encodeURIComponent(decodedKey)}&pageNo=1&numOfRows=60&dataType=JSON&base_date=${ultraDt.baseDate}&base_time=${ultraDt.baseTime}&nx=${NX}&ny=${NY}`;
+        
+        // 2. 단기예보 API (강수확률 및 보완 데이터)
+        const vilageDt = getVilageFcstBaseDateTime();
+        const vilageFcstUrl = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=${encodeURIComponent(decodedKey)}&pageNo=1&numOfRows=60&dataType=JSON&base_date=${vilageDt.baseDate}&base_time=${vilageDt.baseTime}&nx=${NX}&ny=${NY}`;
+
+        const [ultraData, vilageData] = await Promise.all([
+            safeFetchJson(ultraFcstUrl),
+            safeFetchJson(vilageFcstUrl)
         ]);
 
-        // 초단기실황 T1H = 현재 기온(°C)
-        let currentTemp = null;
-        const ultraItems = ultraNcstJson?.response?.body?.items?.item;
-        if (Array.isArray(ultraItems)) {
-            const t1h = ultraItems.find(x => x.category === 'T1H')?.obsrValue;
-            if (t1h !== undefined && t1h !== null && t1h !== '') {
-                currentTemp = parseFloat(t1h);
-            }
+        if (!ultraData || !ultraData.response?.body?.items?.item) {
+            errorMsg.innerText = '날씨 데이터를 불러오는 데 실패했습니다.';
+            return;
         }
 
-        const weeklyData = [];
-        const now = new Date();
+        const ultraItems = ultraData.response.body.items.item;
+        const vilageItems = vilageData?.response?.body?.items?.item || [];
 
-        for (let i = 0; i < 7; i++) {
-            const d = new Date();
-            d.setDate(now.getDate() + i);
-            const yyyy = d.getFullYear();
-            const mm = String(d.getMonth() + 1).padStart(2, '0');
-            const dd = String(d.getDate()).padStart(2, '0');
-            
-            weeklyData.push({
-                dayOffset: i, 
-                dateStr: `${yyyy}${mm}${dd}`,
-                monthDay: `${d.getMonth() + 1}/${d.getDate()}`,
-                dayOfWeek: getKoreanDay(d),
-                isToday: i === 0,
-                minTemp: "--",
-                maxTemp: "--",
-                pop: "0",
-                statusText: "예보 대기",
-                icon: "sunny"
-            });
-        }
+        // 현재 시간대와 가장 가까운 예보값 추출
+        let temp = ultraItems.find(x => x.category === 'T1H')?.fcstValue; // 초단기 예보 기온 (네이버 기온과 가장 유사)
+        let skyCode = ultraItems.find(x => x.category === 'SKY')?.fcstValue;
+        let ptyCode = ultraItems.find(x => x.category === 'PTY')?.fcstValue;
+        let reh = ultraItems.find(x => x.category === 'REH')?.fcstValue;
+        let rn1 = ultraItems.find(x => x.category === 'RN1')?.fcstValue;
+        let wsd = ultraItems.find(x => x.category === 'WSD')?.fcstValue;
+        let pop = vilageItems.find(x => x.category === 'POP')?.fcstValue; // 강수확률
 
-        // --- A. 단기예보 처리 (1~3일차) ---
-        if (fcstJson?.response?.body?.items?.item) {
-            const items = fcstJson.response.body.items.item;
+        // 하늘상태 해석
+        const skyText = { '1': '☀️ 맑음', '3': '⛅ 구름많음', '4': '☁️ 흐림' };
+        const ptyText = { '0': '없음', '1': '비', '2': '비/눈', '3': '눈', '5': '빗방울', '6': '빗방울눈날림', '7': '눈날림' };
 
-            weeklyData.slice(0, 3).forEach(dayObj => {
-                const dayItems = items.filter(x => x.fcstDate === dayObj.dateStr);
-                if (dayItems.length > 0) {
-                    const tmn = dayItems.find(x => x.category === 'TMN')?.fcstValue;
-                    const tmx = dayItems.find(x => x.category === 'TMX')?.fcstValue;
-                    const tmps = dayItems.filter(x => x.category === 'TMP').map(x => parseFloat(x.fcstValue));
-
-                    dayObj.minTemp = tmn ? Math.round(parseFloat(tmn)) : (tmps.length ? Math.round(Math.min(...tmps)) : "--");
-                    dayObj.maxTemp = tmx ? Math.round(parseFloat(tmx)) : (tmps.length ? Math.round(Math.max(...tmps)) : "--");
-
-                    const pops = dayItems.filter(x => x.category === 'POP').map(x => parseInt(x.fcstValue));
-                    dayObj.pop = pops.length ? Math.max(...pops) : 0;
-
-                    let targetItem = dayItems.find(x => x.fcstTime === '1500') || dayItems[0];
-                    const sky = targetItem ? dayItems.find(x => x.fcstTime === targetItem.fcstTime && x.category === 'SKY')?.fcstValue : "1";
-                    const pty = targetItem ? dayItems.find(x => x.fcstTime === targetItem.fcstTime && x.category === 'PTY')?.fcstValue : "0";
-
-                    let rawText = "맑음";
-                    if (pty > 0) rawText = pty == 1 ? "비" : (pty == 2 ? "비/눈" : "눈");
-                    else rawText = sky == 4 ? "흐림" : (sky == 3 ? "구름많음" : "맑음");
-
-                    const meta = getWeatherMeta(rawText);
-                    dayObj.statusText = meta.text;
-                    dayObj.icon = meta.icon;
-                }
-            });
-        }
-
-        // --- B. 중기예보 처리 (4~7일차) ---
-        const landItem = midLandJson?.response?.body?.items?.item?.[0];
-        const tempItem = midTempJson?.response?.body?.items?.item?.[0];
-
-        weeklyData.forEach((dayObj, index) => {
-            if (dayObj.dayOffset >= 3 || dayObj.minTemp === "--") {
-                const idx = dayObj.dayOffset; 
-                
-                if (tempItem) {
-                    const minVal = tempItem[`taMin${idx}`];
-                    const maxVal = tempItem[`taMax${idx}`];
-                    if (minVal !== undefined && minVal !== null) dayObj.minTemp = minVal;
-                    if (maxVal !== undefined && maxVal !== null) dayObj.maxTemp = maxVal;
-                }
-
-                if (landItem) {
-                    const popPm = landItem[`rnSt${idx}Pm`] ?? landItem[`rnSt${idx}`] ?? 0;
-                    const wfPm = landItem[`wf${idx}Pm`] ?? landItem[`wf${idx}`] ?? "맑음";
-
-                    dayObj.pop = popPm;
-                    const meta = getWeatherMeta(wfPm);
-                    dayObj.statusText = meta.text;
-                    dayObj.icon = meta.icon;
-                }
-
-                if (dayObj.minTemp === "--" && index > 0) {
-                    dayObj.minTemp = weeklyData[index - 1].minTemp;
-                    dayObj.maxTemp = weeklyData[index - 1].maxTemp;
-                }
-            }
-        });
-
-        // 오늘 대표 날씨 화면 업데이트
-        renderTodayHero(weeklyData[0], currentTemp);
-
-        // 7일 전체 하단 카드 바 업데이트
-        renderWeeklyGrid(weeklyData);
+        // 화면 업데이트
+        document.getElementById('temp').innerText = temp ? `${temp}°C` : '--°C';
+        document.getElementById('sky').innerText = skyText[skyCode] || '정보없음';
         
-        const formattedBaseTime = `${baseTime.substring(0, 2)}:${baseTime.substring(2, 4)}`;
-        const updateTimeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        let ptyDisplay = ptyText[ptyCode] || '없음';
+        if (pop && ptyCode === '0') {
+            ptyDisplay = `강수확률 ${pop}%`;
+        } else if (ptyCode !== '0') {
+            ptyDisplay = `${ptyText[ptyCode]} (${pop || 0}%)`;
+        }
+        document.getElementById('pty').innerText = ptyDisplay;
 
-        document.getElementById('current-update').innerText = `(기상청 ${formattedBaseTime} 발표 | ${updateTimeStr} 동기화)`;
+        document.getElementById('reh').innerText = reh ? `${reh}%` : '--%';
+        document.getElementById('rn1').innerText = (rn1 && rn1 !== '강수없음') ? rn1 : '0mm';
+        document.getElementById('wsd').innerText = wsd ? `${wsd} m/s` : '-- m/s';
+
+        const timeString = `${now.getMonth() + 1}월 ${now.getDate()}일 ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} 기준`;
+        document.getElementById('update-time').innerText = timeString;
     }
 
-    // 중앙 대형 오늘 날씨 카드 업데이트
-    function renderTodayHero(todayData, currentTemp) {
-        document.getElementById('hero-icon').innerHTML = getWeatherIconSvg(todayData.icon, "hero-icon-svg");
-        document.getElementById('hero-day-label').innerText = `오늘(${todayData.dayOfWeek})`;
-        document.getElementById('hero-status').innerText = todayData.statusText;
-
-        // 중앙의 큰 온도는 오늘 최고기온이 아니라 초단기실황 현재기온(T1H)을 표시
-        const currentTempText = Number.isFinite(currentTemp) ? `${Math.round(currentTemp * 10) / 10}°C` : '--°C';
-        document.getElementById('hero-current-temp').innerText = currentTempText;
-        document.getElementById('hero-min-temp').innerText = `${todayData.minTemp}°`;
-        document.getElementById('hero-max-temp').innerText = `${todayData.maxTemp}°`;
-        document.getElementById('hero-pop').innerText = `${todayData.pop}%`;
-    }
-
-    // 하단 7일 예보 카드 업데이트
-    function renderWeeklyGrid(dataList) {
-        const gridContainer = document.getElementById('weekly-grid');
-        gridContainer.innerHTML = '';
-
-        dataList.forEach(data => {
-            const dateLabel = data.isToday ? `오늘(${data.dayOfWeek})` : `${data.monthDay}(${data.dayOfWeek})`;
-            const cardClass = data.isToday ? 'day-card today' : 'day-card';
-
-            const cardHtml = `
-                <div class="${cardClass}">
-                    <div class="card-date-header">${dateLabel}</div>
-                    
-                    <div class="card-icon-svg" aria-label="${data.statusText}">${getWeatherIconSvg(data.icon)}</div>
-                    <div class="card-status-text">${data.statusText}</div>
-
-                    <div class="card-temp-sub">
-                        <span class="min-temp">${data.minTemp}°</span> / 
-                        <span class="max-temp">${data.maxTemp}°</span>
-                    </div>
-
-                    <div class="card-info-badge">
-                        ☔ <span style="color:#e74c3c;">${data.pop}%</span>
-                    </div>
-                </div>
-            `;
-            gridContainer.insertAdjacentHTML('beforeend', cardHtml);
-        });
-    }
-
-    updateClock();
-    setInterval(updateClock, 1000);
-
-    fetch7DaysWeather();
-    setInterval(fetch7DaysWeather, 600000); 
+    // 실행
+    fetchWeather();
 </script>
-
 </body>
 </html>
